@@ -30,6 +30,33 @@ services:
         - FOWNER
         - SETGID
         - SETUID
+  db-dump:
+    image: registry.spin.nersc.gov/pub/postgres-pg_dump:12-alpine
+    stdin_open: true
+    tty: true
+    volumes:
+      - /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump/:/pg_dump
+    secrets:
+      - mode: '0444'
+        uid: '55710'
+        gid: '55710'
+        source: db.metlims-nersc.postgres_password2
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD_FILE: /run/secrets/db.metlims-nersc.postgres_password2
+      POSTGRES_DATABASE: all
+      POSTGRES_DUMP_DIR: /pg_dump
+      POSTGRES_DUMP_FILE_BASE: metlims-dump.sql.gz
+      POSTGRES_DUMP_RETAIN_DAYS: '7'
+      TZ: US/Pacific
+    cap_drop:
+        - ALL
+    user: 55710:55710
+    labels:
+      io.rancher.container.pull_image: always
+      cron.schedule: 0 0 11 * * *
+      io.rancher.container.start_once: 'true'
 
 volumes:
   app.metlims-nersc:
@@ -41,4 +68,3 @@ volumes:
 secrets:
   db.metlims-nersc.postgres_password2:
     external: true
-
