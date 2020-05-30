@@ -47,8 +47,8 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/db.metlims-nersc.postgres_password2
       POSTGRES_DATABASE: labkey
       POSTGRES_DUMP_DIR: /pg_dump
-      POSTGRES_DUMP_FILE_BASE: metlims-dump.sql.gz
-      POSTGRES_DUMP_RETAIN_DAYS: '7'
+      POSTGRES_DUMP_FILE_BASE: ${RANCHER_ENVIRONMENT}-metlims-dump.sql.gz
+      POSTGRES_DUMP_RETAIN_DAYS: '14'
       TZ: US/Pacific
     cap_drop:
         - ALL
