@@ -1,108 +1,82 @@
-# metlims
-Instructions and Docker setup for running our LIMS
+# metatlas LIMS
+Configuration for running [metatlas.nersc.gov](https://metatlas.nersc.gov/),the LIMS for the
+[metabolomics team](https://jgi.doe.gov/our-science/science-programs/metabolomics-technology/)
+at [Joint Genome Institute](https://www.jgi.doe.gov/). This LIMS is based on the community 
+edition of [LabKey](https://www.labkey.org/). The metatlas LIMS is deployed on
+[NERSC](http://www.nersc.gov/)'s [SPIN](https://www.nersc.gov/systems/spin/)
+platform for running containered services using [Kubernetes](https://kubernetes.io/) via
+[Rancher](https://rancher.com/products/rancher/) v2.
 
-Download tar.gz file of production installation here:
-https://www.labkey.com/products-services/labkey-server/download-community-edition/
+## LabKey Installation Documentation
 
-Uncompress the tar file to the root of the repo.
+LabKey provides [overall installation instuctions](https://www.labkey.org/Documentation/wiki-page.view?name=manualInstall) and [instructions for setting up the required components](https://www.labkey.org/Documentation/wiki-page.view?name=installComponents#folder). But reading those docs is not necessary if deploying from this repo without modification.
 
-Overall instructions:
-https://www.labkey.org/Documentation/wiki-page.view?name=manualInstall
+## Overview of Repo
 
-Instructions for setting up required components are here:
-https://www.labkey.org/Documentation/wiki-page.view?name=installComponents#folder
-
-
-# Overall Setup
-
-Should be something like this:
+The layout of this repo is:
 
 ```
-[bpb@Benjamins-MBP-4 ~ 03:09 PM] ~/repos/metlims/metlims-nersc (master) > tree -L 2
+$ tree -L 2
 .
-├── app
+├── LICENSE
+├── README.md
+├── backup_restore
 │   ├── Dockerfile
-│   ├── LabKey19.1.1-63156.2-community-bin
+│   ├── backup.yaml
+│   ├── bin
 │   ├── build.sh
-│   ├── example_labkey.xml
-│   ├── labkey.xml
-│   ├── labkeywebapp
-│   ├── modules
-│   ├── pipeline-lib
-│   └── tomcat-lib
-├── docker-compose.yml
-└── rancher-compose.yml
-```
-
-## app
-This is the LabKey Server with Apache Tomcat. Several LabKey community edition
-files are needed from the tarball. The following files are copied into the
-container:
-- labkeywebapp
-- modules
-- pipeline-lib
-- labkey.xml
-- tomcat-lib
-
-They should be present in the same directory as the Dockerfile so that the
-copies work.
-
-
-## db
-At the moment is empty since we are using the base postgres:10 image.
-
-# docker-compose.yml
-This runs and connects the LabKey server with the Postgres database container.
-
-# example_labkey.xml_string
-This is what your "labkey.xml" file needs to contain.  You will have to have the password in a file that you put in secrets like This
-
-```
-rancher secret create db.metlims-nersc.postgres_password2 postgres.env
-```
-
-You will have to create (and maybe remove) an nfs volume like This
-
-```
-rancher volume create --driver rancher-nfs db.metlims-nersc
-rancher volume rm db.metlims-nersc
-```
-
-Other useful commands
-
-```
-docker login registry.spin.nersc.gov
-rancher exec -it metlims-nersc/db /bin/bash
-```
-
-push the local docker image to the registry with "build.sh" which does this:
-
-```
-#!/bin/bash
-
-SPIN_USER="bpb20"
-CONTAINER_NAME="metatlas_lims-app"
-VERSION=`date "+%Y-%m-%d-%H-%M"`
-echo "$VERSION"
-docker image build --tag "$CONTAINER_NAME:$VERSION" .
-docker image tag "$CONTAINER_NAME:$VERSION" "registry.spin.nersc.gov/$SPIN_USER/$CONTAINER_NAME:$VERSION"
-docker image push "registry.spin.nersc.gov/$SPIN_USER/$CONTAINER_NAME:$VERSION"
-```
-
-Change the version of the image in docker-compose.yml each time you do this.
-
-Your folder for the app should look something like this after unpacking the LabKey Community edition.  You will have to move some of the folders out of the LabKey original folder.
-
-```
-[bpb@Benjamins-MBP-4 ~ 03:07 PM] ~/repos/metlims/metlims-nersc/app (master) > tree -L 1
-.
-├── Dockerfile
-├── LabKey19.1.1-63156.2-community-bin
+│   ├── restore-root.yaml
+│   └── restore.yaml
 ├── build.sh
-├── example_labkey.xml
-├── labkey.xml
-├── labkeywebapp
-├── modules
-├── pipeline-lib
-└── tomcat-lib
+├── db
+│   ├── db-data.yaml
+│   └── db.yaml
+├── deploy.sh
+├── get-cert
+│   ├── get-cert.sh
+│   └── get-cert.yaml
+├── labkey
+│   ├── Dockerfile
+│   ├── bin
+│   ├── build.sh
+│   ├── config
+│   ├── labkey-files.yaml
+│   ├── labkey.yaml
+│   └── lb.yaml
+└── migrate_to_spin2
+    ├── shutdown-metatlas-dev.sh
+    └── workflow.md
+
+8 directories, 20 files
+$
 ```
+
+Each subdirectory in this repo, except migrate_to_spin2, corresponds to a pod within the workload.
+- backup_restore: Daily cron job that performs a backup of the database and files (within /usr/local/labkey/files/) to the global filesystem at /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump. Also can be used to before data restores.
+- db: postgres database
+- get-cert: For obtaining a temporary cert from [Let's Encyrpt](https://letsencrypt.org/) for use during testing. Nominally not running.
+- labkey: LabKey community edition web application running on top of Apache Tomcat.
+
+Each subdirectory contains a kubernetes .yaml file used to configure a pod. All of the pods except for labkey and backup_restore make use of externally generated container images pulled from [docker hub](https://www.dockerhub.com/). 
+
+## Deployment Instructions
+1. Install [docker](https://docs.docker.com/get-docker/) or [podman](https://podman.io/getting-started/installation) on your local machine.
+1. Git clone this repo to your local machine:
+  - `git clone https://github.com/biorack/labkey_deploy`
+2. Build and push images to [registry.nersc.gov](https://registry.nersc.gov):
+  - `./labkey_deploy/build.sh --all`
+3. Git clone this repo to a cori login node:
+  - `git clone https://github.com/biorack/labkey_deploy`
+4. In the root directory of the deploy_labkey repo, create a .secrets file:
+  - ```cd labkey_deploy
+        touch .secrets
+	chmod 600 .secrets
+	echo "POSTGRES_PASSWORD=MyPostgresPassWord" > .secrets
+	echo "MASTER_ENCRYPTION_KEY=MyLabkeyEncryptionKey" >> .secrets```
+5. In the root directory of the deploy_labkey repo, create the following files containing your TLS private key and certificate:
+  - .tls.key
+  - .tls.cert
+6. Ensure the .tls.key file is only readable by you:
+  - `chmod 600 .tls.key
+7. Run the deployment script: `./deploy.sh`
+  - You'll need to pass it flags the location of the labkey and backup_restore docker images on the repos.
