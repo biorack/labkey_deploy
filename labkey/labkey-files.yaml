@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    field.cattle.io/creatorId: u-m44hajazl7
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: cluster.local/3par-nfs-client-provisioner
+  creationTimestamp: null
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    cattle.io/creator: norman
+  name: labkey-files
+  selfLink: /api/v1/namespaces/lims/persistentvolumeclaims/labkey-files
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: nfs-client
+  volumeMode: Filesystem
+  volumeName: pvc-ad38136b-f36a-45c7-8e6d-bbd2d5a46bc7
+status: {}
