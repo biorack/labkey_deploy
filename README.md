@@ -68,15 +68,17 @@ Each subdirectory contains a kubernetes .yaml file used to configure a pod. All 
 3. Git clone this repo to a cori login node:
   - `git clone https://github.com/biorack/labkey_deploy`
 4. In the root directory of the deploy_labkey repo, create a .secrets file:
-  - ```cd labkey_deploy
-        touch .secrets
-	chmod 600 .secrets
-	echo "POSTGRES_PASSWORD=MyPostgresPassWord" > .secrets
-	echo "MASTER_ENCRYPTION_KEY=MyLabkeyEncryptionKey" >> .secrets```
+  -
+```cd labkey_deploy
+touch .secrets
+chmod 600 .secrets
+echo "POSTGRES_PASSWORD=MyPostgresPassWord" > .secrets
+echo "MASTER_ENCRYPTION_KEY=MyLabkeyEncryptionKey" >> .secrets
+```
 5. In the root directory of the deploy_labkey repo, create the following files containing your TLS private key and certificate:
   - .tls.key
   - .tls.cert
 6. Ensure the .tls.key file is only readable by you:
-  - `chmod 600 .tls.key
+  - `chmod 600 .tls.key`
 7. Run the deployment script: `./deploy.sh`
   - You'll need to pass it flags the location of the labkey and backup_restore docker images on the repos.
