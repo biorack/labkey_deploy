@@ -20,12 +20,14 @@ ROOT_BACKUP_DIR="/global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump/"
 # initialize variables to avoid errors
 BACKUP_RESTORE=""
 LABKEY=""
+NEW=0
 # default to the most recent directory with a timestamp for a name
 TIMESTAMP=$(ls -1pt "${ROOT_BACKUP_DIR}" | grep -E "^2[0-9]{11}/$" | head -1 | tr -d '/')
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     -b|--backup) BACKUP_RESTORE="$2"; shift ;;
     -l|--labkey) LABKEY="$2"; shift ;;
+    -n|--new) NEW="1" ;;
     -t|--timestamp) TIMESTAMP="$2"; shift ;;
     -h|--help)
         echo -e "$0 [options]"
@@ -33,6 +35,7 @@ while [[ "$#" -gt 0 ]]; do
         echo "   -h, --help          show this command refernce"
 	echo "   -b, --backup        source of backup_restore image (required)"
 	echo "   -l, --labkey        source of labkey image (required)"
+        echo "   -n, --new           delete all resources in namespace and start new instances"
 	echo "   -t, --timestamp     timestamp of the backup to use (defaults to most recent)"
         exit 0
         ;;
@@ -160,8 +163,13 @@ if ! rancher inspect --type namespace "${NAMESPACE}"; then
   rancher namespace create "${NAMESPACE}"
 fi
 
-# clean up any existing resources to make this script re-runable
-rancher kubectl delete deployments,statefulsets,cronjobs,services,secrets,pods --all $FLAGS
+if [[ "$NEW" -eq 1 ]]; then
+  # clean up any existing resources to start a new deployment
+  rancher kubectl delete deployments,statefulsets,cronjobs,services,secrets,pods --all $FLAGS
+fi
+
+# I think it is safe to delete secrets if they are recreated immediately
+rancher kubectl delete secrets --all $FLAGS
 
 # start building up the new instance
 rancher kubectl create secret generic db $FLAGS \
@@ -183,26 +191,28 @@ rancher kubectl apply $FLAGS -f "${REPO_DIR}/db/db.yaml"
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/restore.yaml"
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/restore-root.yaml"
 
-## Restore labkey database
 rancher kubectl rollout status $FLAGS statefulset/db
-rancher kubectl wait $FLAGS deployment.apps/restore --for=condition=available --timeout=60s
-rancher kubectl exec deployment.apps/restore $FLAGS -- /restore.sh "${DB_BACKUP_INTERNAL}"
+if [[ "$NEW" -eq 1 ]]; then
+  ## Restore labkey database
+  rancher kubectl wait $FLAGS deployment.apps/restore --for=condition=available --timeout=60s
+  rancher kubectl exec deployment.apps/restore $FLAGS -- /restore.sh "${DB_BACKUP_INTERNAL}"
 
-# Restore labkey files
-# The container that copies the archive from global filesystem to the
-# persistant volume cannot be running as root and therefore cannot
-# correctly set the ownership of the unarchived files. Therefore
-# a second pod (restore-root) does not mount the global filesystem
-# and can therefore untar the archive with the correct ownership.
-FILES_TEMP="${FILES_MNT}/$(basename ${FILES_BACKUP_INTERNAL})"
-rancher kubectl wait $FLAGS deployment.apps/restore-root --for=condition=available --timeout=60s
-rancher kubectl exec deployment.apps/restore-root $FLAGS -- rm -rf "${FILES_MNT}"/*
-rancher kubectl exec deployment.apps/restore-root $FLAGS -- chmod 777 "${FILES_MNT}"
-rancher kubectl wait $FLAGS deployment.apps/restore --for=condition=available --timeout=600s
-rancher kubectl exec deployment.apps/restore $FLAGS -- cp "${FILES_BACKUP_INTERNAL}" "${FILES_TEMP}"
-rancher kubectl exec deployment.apps/restore-root $FLAGS -- tar xzpf "${FILES_TEMP}" -C "${FILES_MNT}"
-rancher kubectl exec deployment.apps/restore-root $FLAGS -- rm "${FILES_TEMP}"
-
+  # Restore labkey files
+  # The container that copies the archive from global filesystem to the
+  # persistant volume cannot be running as root and therefore cannot
+  # correctly set the ownership of the unarchived files. Therefore
+  # a second pod (restore-root) does not mount the global filesystem
+  # and can therefore untar the archive with the correct ownership.
+  FILES_TEMP="${FILES_MNT}/$(basename ${FILES_BACKUP_INTERNAL})"
+  rancher kubectl wait $FLAGS deployment.apps/restore-root --for=condition=available --timeout=60s
+  rancher kubectl exec deployment.apps/restore-root $FLAGS -- rm -rf "${FILES_MNT}"/*
+  rancher kubectl exec deployment.apps/restore-root $FLAGS -- chmod 777 "${FILES_MNT}"
+  rancher kubectl wait $FLAGS deployment.apps/restore --for=condition=available --timeout=600s
+  rancher kubectl exec deployment.apps/restore $FLAGS -- cp "${FILES_BACKUP_INTERNAL}" "${FILES_TEMP}"
+  rancher kubectl exec deployment.apps/restore-root $FLAGS -- tar xzpf "${FILES_TEMP}" -C "${FILES_MNT}"
+  rancher kubectl exec deployment.apps/restore-root $FLAGS -- rm "${FILES_TEMP}"
+fi  
+  
 ## Create labkey pod
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/labkey.yaml"
 
@@ -211,5 +221,9 @@ rancher kubectl apply $FLAGS -f "${REPO_DIR}/labkey/lb.yaml"
 
 ## Create backup pod
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/backup.yaml"
+
+# scale down the pods used for restoring
+rancher kubectl scale --replicas=0 deployment.apps/restore $FLAGS
+rancher kubectl scale --replicas=0 deployment.apps/restore-root $FLAGS
 
 rm -rf "${DEPLOY_TMP}"

@@ -69,6 +69,9 @@ export JAVA_OPTS="${JAVA_OPTS} \
 -Ddatabase.port=${DATABASE_PORT} \
 -Ddatabase.user=${DATABASE_USER} \
 -Ddatabase.name=${DATABASE_NAME} \
+-Dsmtp.host=${SMTP_HOST} \
+-Dsmtp.port=${SMTP_PORT} \
+-Dsmtp.user=${SMTP_USER} \
 -Dlabkey.server.hostname=${LABKEY_SERVER_HOSTNAME}" 
 
 # this way prevents secrets from being logged
