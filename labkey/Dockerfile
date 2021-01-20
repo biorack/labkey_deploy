@@ -20,17 +20,18 @@
 # increase configuration options.
 
 #temp containter only used for building
-FROM alpine:latest AS labkey_build
+FROM alpine:3 AS labkey_build
 
-ARG LABKEY_MAJOR_VERSION=19
-ARG LABKEY_MINOR_VERSION=3.0
-ARG LABKEY_BUILD_VERSION=64757.2-community
-ARG LABKEY_BUILD_HOME=/labkey/labkey
-ARG CATALINA_BUILD_HOME=/labkey/apps/tomcat
-ARG DOWNLOAD_URL_START=http://labkey.s3.amazonaws.com/downloads/general/r
+ARG LABKEY_EDITION="community"
+ARG LABKEY_MAJOR_VERSION="20"
+ARG LABKEY_MINOR_VERSION="11.0"
+ARG LABKEY_BUILD_VERSION="20.11.0.1"
+ARG LABKEY_BUILD_HOME="/labkey/labkey"
+ARG CATALINA_BUILD_HOME="/labkey/apps/tomcat"
+ARG DOWNLOAD_URL_START="https://lk-binaries.s3-us-west-2.amazonaws.com/downloads/release"
 
-ARG LABKEY_FULL_VERSION=$LABKEY_MAJOR_VERSION.$LABKEY_MINOR_VERSION-$LABKEY_BUILD_VERSION
-ARG DOWNLOAD_URL_VERSION=${LABKEY_MAJOR_VERSION}.${LABKEY_MINOR_VERSION}
+ARG LABKEY_FULL_VERSION="${LABKEY_BUILD_VERSION}-${LABKEY_EDITION}"
+ARG DOWNLOAD_URL_VERSION="${LABKEY_MAJOR_VERSION}.${LABKEY_MINOR_VERSION}"
 
 RUN apk add --update curl && \
     mkdir -p ${LABKEY_BUILD_HOME}
@@ -39,19 +40,19 @@ WORKDIR /labkey
 RUN mkdir -p ${LABKEY_BUILD_HOME}/externalModules && \
     mkdir -p ${CATALINA_BUILD_HOME}/lib
 
-RUN curl -LO ${DOWNLOAD_URL_START}/${DOWNLOAD_URL_VERSION}/LabKey${LABKEY_FULL_VERSION}-bin.tar.gz && \
-    tar xzf LabKey${LABKEY_FULL_VERSION}-bin.tar.gz
+RUN curl -LO "${DOWNLOAD_URL_START}/${LABKEY_EDITION}/${DOWNLOAD_URL_VERSION}/LabKey${LABKEY_FULL_VERSION}.tar.gz" && \
+    tar xzf "LabKey${LABKEY_FULL_VERSION}.tar.gz"
 
-RUN cp -R LabKey${LABKEY_FULL_VERSION}-bin/labkeywebapp ${LABKEY_BUILD_HOME} && \
-    cp -R LabKey${LABKEY_FULL_VERSION}-bin/modules ${LABKEY_BUILD_HOME} && \
-    cp -R LabKey${LABKEY_FULL_VERSION}-bin/pipeline-lib ${LABKEY_BUILD_HOME} && \
-    cp LabKey${LABKEY_FULL_VERSION}-bin/tomcat-lib/* ${CATALINA_BUILD_HOME}/lib/
+RUN cp -R LabKey${LABKEY_FULL_VERSION}/labkeywebapp ${LABKEY_BUILD_HOME} && \
+    cp -R LabKey${LABKEY_FULL_VERSION}/modules ${LABKEY_BUILD_HOME} && \
+    cp -R LabKey${LABKEY_FULL_VERSION}/pipeline-lib ${LABKEY_BUILD_HOME} && \
+    cp LabKey${LABKEY_FULL_VERSION}/tomcat-lib/* ${CATALINA_BUILD_HOME}/lib/
 
 COPY bin ${LABKEY_BUILD_HOME}/bin
 RUN chmod +x ${LABKEY_BUILD_HOME}/bin/*
 
 # Build complete. Now compile release on final containter.
-FROM tomcat:9-jdk13-openjdk-slim-buster
+FROM tomcat:9-jdk15-openjdk-slim-buster
 
 ARG LABKEY_BUILD_HOME=/labkey/labkey
 ARG CATALINA_BUILD_HOME=/labkey/apps/tomcat

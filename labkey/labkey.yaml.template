@@ -39,6 +39,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: CATALINA_OPTS
+          value: "-Xms4G -Xmx4G -XX:-HeapDumpOnOutOfMemoryError"
         - name: SMTP_HOST
           value: smtp.lbl.gov
         - name: MASTER_ENCRYPTION_KEY

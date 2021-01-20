@@ -60,25 +60,29 @@ Each subdirectory in this repo, except migrate_to_spin2, corresponds to a pod wi
 Each subdirectory contains a kubernetes .yaml file used to configure a pod. All of the pods except for labkey and backup_restore make use of externally generated container images pulled from [docker hub](https://www.dockerhub.com/). 
 
 ## Deployment Instructions
+
+The following instructions can be used to do a new deployment of metatlas LIMS, including a restore of old data from backups, or to update an existing deployment to match the settings in this repo.
+
 1. Install [docker](https://docs.docker.com/get-docker/) or [podman](https://podman.io/getting-started/installation) on your local machine.
-1. Git clone this repo to your local machine:
+2. Git clone this repo to your local machine:
   - `git clone https://github.com/biorack/labkey_deploy`
-2. Build and push images to [registry.nersc.gov](https://registry.nersc.gov):
+3. Build and push images to [registry.spin.nersc.gov](https://registry.spin.nersc.gov):
+  - `docker login registry.spin.nersc.gov`
   - `./labkey_deploy/build.sh --all`
-3. Git clone this repo to a cori login node:
+4. Git clone this repo to a cori login node:
   - `git clone https://github.com/biorack/labkey_deploy`
-4. In the root directory of the deploy_labkey repo, create a .secrets file:
-  -
-```cd labkey_deploy
-touch .secrets
-chmod 600 .secrets
-echo "POSTGRES_PASSWORD=MyPostgresPassWord" > .secrets
-echo "MASTER_ENCRYPTION_KEY=MyLabkeyEncryptionKey" >> .secrets
-```
-5. In the root directory of the deploy_labkey repo, create the following files containing your TLS private key and certificate:
+5. In the root directory of the deploy_labkey repo, create a .secrets file:
+  - ```cd labkey_deploy
+       touch .secrets
+       chmod 600 .secrets
+       echo "POSTGRES_PASSWORD=MyPostgresPassWord" > .secrets
+       echo "MASTER_ENCRYPTION_KEY=MyLabkeyEncryptionKey" >> .secrets```
+6. In the root directory of the deploy_labkey repo, create the following files containing your TLS private key and certificate:
   - .tls.key
   - .tls.cert
-6. Ensure the .tls.key file is only readable by you:
-  - `chmod 600 .tls.key`
-7. Run the deployment script: `./deploy.sh`
-  - You'll need to pass it flags the location of the labkey and backup_restore docker images on the repos.
+    - The certificate should be PEM encoded, contain the full chain, and be in reverse order (your cert at top to root cert at bottom).
+7. Ensure the .tls.key file is only readable by you:
+  - `chmod 600 .tls.key
+8. Run the deployment script: `./deploy.sh --labkey registry.spin.nersc.gov/lims/labkey:YYYY-MM-DD-HH-SS --backup registry.spin.nersc.gov/lims/backup_restore:YYYY-MM-DD-HH-SS`
+  - You'll need to pass it flags the location of the labkey and backup_restore docker images on the repos. Set the timestamps to match the tags on registry.spin.nersc.gov. The two images will likely have different timestamps!
+  - If doing a new installation, where the persistant volumes do not already contain a populated database and filesystem, then pass the `--new` flag. The `--new` flag will restore backups of both the database and the filesystem where labkey stores files. 
