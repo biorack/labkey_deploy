@@ -29,6 +29,10 @@ spec:
           - env:
             - name: POSTGRES_USER
               value: postgres
+            - name: FILES_SRC
+              value: /labkey_files
+            - name: TZ
+              value: America/Los_Angeles
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
@@ -57,6 +61,8 @@ spec:
             volumeMounts:
             - mountPath: /backups
               name: vol1
+            - mountPath: /labkey_files
+              name: vol2
           dnsConfig: {}
           dnsPolicy: ClusterFirst
           restartPolicy: Never
@@ -69,6 +75,9 @@ spec:
               path: /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump
               type: Directory
             name: vol1
+          - name: vol2
+            persistentVolumeClaim:
+              claimName: labkey-files
   schedule: 1 16 * * *
   successfulJobsHistoryLimit: 3
   suspend: true

@@ -1,8 +1,9 @@
 #!/bin/bash
 
-set -euf -o pipefail
+set -eu -o pipefail
+shopt -s failglob
 
-PGHOST="{$PGHOST:-db}"
+PGHOST="${PGHOST:-db}"
 PGUSER=${PGUSER:-postgres}
 DB=${DB:-labkey}
 BACKUP_ROOT="${BACKUP_ROOT:-/backups}"
@@ -18,5 +19,5 @@ pg_dumpall --globals-only | gzip > "${BACKUP_DIR}/postgres_globals_${TIMESTAMP}.
 pg_dump -Fc --file "${BACKUP_DIR}/labkey_db_${TIMESTAMP}" ${DB}
 tar czpf "${BACKUP_DIR}/labkey_files_${TIMESTAMP}.tar.gz" -C "${FILES_SRC}" .
 
-chown -R "${BACKUP_DIR}" "${USER}:${FILES_GID}"
-chmod 660 "${BACKUP_DIR}/*"
+chown -R "$(id -u):${FILES_GID}" "${BACKUP_DIR}"
+chmod 660 ${BACKUP_DIR}/*
