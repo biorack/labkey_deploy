@@ -68,6 +68,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
 
 ENV LABKEY_HOME=/usr/local/labkey
 
+# Session timeout to 1 week. Default was 30 minutes
+RUN sed 's%<session-timeout>.*</session-timeout>%<session-timeout>10080</session-timeout>%' -i /usr/local/tomcat/conf/web.xml
+
 COPY --from=labkey_build ${LABKEY_BUILD_HOME} ${LABKEY_HOME}
 COPY --from=labkey_build ${CATALINA_BUILD_HOME}/lib ${CATALINA_HOME}/lib
 
