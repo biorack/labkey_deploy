@@ -62,8 +62,15 @@ fi
 ${DOCKER} image build --tag "${SHORT_TAG}" "${DOCKERFILE_DIR}"
 
 if [[ "$REGISTRY" != "NONE" ]]; then
-  if [[ $(basename $(readlink -f $(which ${DOCKER}))) == 'podman' ]]; then
-    PUSH_FLAGS="--format=docker"
+  if [[ $(uname -s) == "Darwin" ]]; then
+    # no readlink on macOS...
+    if [[ $(basename $(which ${DOCKER})) == 'podman' ]]; then
+      PUSH_FLAGS="--format=docker"
+    fi
+  else
+    if [[ $(basename $(readlink -f $(which ${DOCKER}))) == 'podman' ]]; then
+      PUSH_FLAGS="--format=docker"
+    fi
   fi
   ${DOCKER} image tag "${SHORT_TAG}" "${LONG_TAG}"
   ${DOCKER} image push ${PUSH_FLAGS:-} "${LONG_TAG}"
