@@ -23,9 +23,9 @@
 FROM alpine:3 AS labkey_build
 
 ARG LABKEY_EDITION="community"
-ARG LABKEY_MAJOR_VERSION="20"
-ARG LABKEY_MINOR_VERSION="11.0"
-ARG LABKEY_BUILD_VERSION="20.11.0.1"
+ARG LABKEY_MAJOR_VERSION="21"
+ARG LABKEY_MINOR_VERSION="3.0"
+ARG LABKEY_BUILD_VERSION="21.3.0-2"
 ARG LABKEY_BUILD_HOME="/labkey/labkey"
 ARG CATALINA_BUILD_HOME="/labkey/apps/tomcat"
 ARG DOWNLOAD_URL_START="https://lk-binaries.s3-us-west-2.amazonaws.com/downloads/release"
@@ -52,7 +52,7 @@ COPY bin ${LABKEY_BUILD_HOME}/bin
 RUN chmod +x ${LABKEY_BUILD_HOME}/bin/*
 
 # Build complete. Now compile release on final containter.
-FROM tomcat:9-jdk15-openjdk-slim-buster
+FROM tomcat:9-jdk16-openjdk-slim-buster
 
 ARG LABKEY_BUILD_HOME=/labkey/labkey
 ARG CATALINA_BUILD_HOME=/labkey/apps/tomcat
