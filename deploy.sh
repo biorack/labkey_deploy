@@ -1,16 +1,14 @@
 #!/bin/bash
-
 set -euf -o pipefail
 
 # mount points of the persistant volumes
 FILES_MNT=/labkey_files
 BACKUP_MNT=/backups
-NAMESPACE="${NAMESPACE:-lims}"
-PROJECT="${PROJECT:-c-tmq7p:p-gqfz8}" # default value is production cluster for m2650. Run 'rancher context switch' to get other values.
 
 SPIN_MODULE="spin/2.0"
 RANCHER_MAJOR_VERSION_REQUIRED=2
 
+NAMESPACE="lims"
 # default options to pass to kubectl
 FLAGS="--namespace=${NAMESPACE}"
 
@@ -20,12 +18,15 @@ ROOT_BACKUP_DIR="/global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump/"
 # initialize variables to avoid errors
 BACKUP_RESTORE=""
 LABKEY=""
+DEV=0
 NEW=0
+
 # default to the most recent directory with a timestamp for a name
 TIMESTAMP=$(ls -1pt "${ROOT_BACKUP_DIR}" | grep -E "^2[0-9]{11}/$" | head -1 | tr -d '/')
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     -b|--backup) BACKUP_RESTORE="$2"; shift ;;
+    -d|--dev) DEV="1" ;;
     -l|--labkey) LABKEY="$2"; shift ;;
     -n|--new) NEW="1" ;;
     -t|--timestamp) TIMESTAMP="$2"; shift ;;
@@ -34,6 +35,7 @@ while [[ "$#" -gt 0 ]]; do
         echo ""
         echo "   -h, --help          show this command refernce"
 	echo "   -b, --backup        source of backup_restore image (required)"
+        echo "   -d, --dev           operate on the development cluster (defaults to production)"
 	echo "   -l, --labkey        source of labkey image (required)"
         echo "   -n, --new           delete all resources in namespace and start new instances"
 	echo "   -t, --timestamp     timestamp of the backup to use (defaults to most recent)"
@@ -68,16 +70,11 @@ function file_exists_readable_not_empty_or_error () {
 }
 
 function file_safe_secret_or_error() {
-  if [ $(stat -c %a "$1") != 600 ]; then
+  if [ "$(stat -c %a "$1")" != 600 ]; then
     >&2 echo "ERROR: ${1} must have file permissions 600."
     exit 3 
   fi
   return 0
-}
-
-function create_file_with_substitution() {
-  # arguments are input_filename, search_regex, replacement, output_filename
-  sed -e "s%${2}%${3}%" $1 > $4
 }
 
 required_flag_or_error "$TIMESTAMP" "You are required to supply a backup timestamp via -t or --timestamp."
@@ -90,9 +87,39 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # root directory of this git repo
 REPO_DIR="${SCRIPT_DIR}"
 
+# Get dependency mo
+MO_EXE="${SCRIPT_DIR}/lib/mo"
+if [[ ! -x "${MO_EXE}" ]]; then
+  mkdir -p "$(dirname "$MO_EXE")"
+  curl -sSL https://git.io/get-mo -o "${MO_EXE}"
+  chmod +x "${MO_EXE}"
+fi
+
+# Get dependency kubeval
+KUBEVAL_EXE="${SCRIPT_DIR}/lib/kubeval"
+if [[ ! -x "${KUBEVAL_EXE}" ]]; then
+  mkdir -p "$(dirname "$KUBEVAL_EXE")"
+  pushd "$(dirname "$KUBEVAL_EXE")"
+  curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | \
+          tar xvz "$(basename "$KUBEVAL_EXE")"
+  popd
+fi
+
+if [[ $DEV -eq 1 ]]; then
+  PROJECT="c-fwj56:p-lswtz" # development:m2650
+  export LONG_FQDN="lb.lims.development.svc.spin.nersc.org"
+  export SHORT_FQDN="metatlas-dev.nersc.gov"
+  CERT_FILE="${SCRIPT_DIR}/.tls.labkey-dev.cert"
+  KEY_FILE="${SCRIPT_DIR}/.tls.labkey-dev.key"
+else
+  PROJECT="c-tmq7p:p-gqfz8" # production cluster for m2650. Run 'rancher context switch' to get other values.
+  export LONG_FQDN="lb.lims.production.svc.spin.nersc.org"
+  export SHORT_FQDN="metatlas.nersc.gov"
+  CERT_FILE="${SCRIPT_DIR}/.tls.labkey.cert"
+  KEY_FILE="${SCRIPT_DIR}/.tls.labkey.key"
+fi
+
 SECRETS_FILE="${REPO_DIR}/.secrets"
-CERT_FILE="${REPO_DIR}/.tls.cert"
-KEY_FILE="${REPO_DIR}/.tls.key"
 
 # these are relative to the global filesystem:
 ROOT_BACKUP_DIR="/global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump/"
@@ -114,19 +141,26 @@ file_exists_readable_not_empty_or_error "$KEY_FILE"
 file_safe_secret_or_error "${SECRETS_FILE}"
 file_safe_secret_or_error "${KEY_FILE}"
 
+# variables for template substitutions by mo
+export LABKEY_IMAGE_TAG="$LABKEY"
+export BACKUP_RESTORE_IMAGE_TAG="$BACKUP_RESTORE"
+
 DEPLOY_TMP="${SCRIPT_DIR}/deploy_tmp"
 mkdir -p "$DEPLOY_TMP"
-rm -rf "$DEPLOY_TMP/*"
-create_file_with_substitution "${SCRIPT_DIR}/labkey/labkey.yaml.template" \
-	"@@LABKEY_IMAGE_TAG@@" "$LABKEY" "${DEPLOY_TMP}/labkey.yaml"
-create_file_with_substitution "${SCRIPT_DIR}/backup_restore/backup.yaml.template" \
-	"@@BACKUP_RESTORE_IMAGE_TAG@@" "$BACKUP_RESTORE" "${DEPLOY_TMP}/backup.yaml"
-create_file_with_substitution "${SCRIPT_DIR}/backup_restore/restore.yaml.template" \
-	"@@BACKUP_RESTORE_IMAGE_TAG@@" "$BACKUP_RESTORE" "${DEPLOY_TMP}/restore.yaml"
-create_file_with_substitution "${SCRIPT_DIR}/backup_restore/restore-root.yaml.template" \
-	"@@BACKUP_RESTORE_IMAGE_TAG@@" "$BACKUP_RESTORE" "${DEPLOY_TMP}/restore-root.yaml"
+rm -rf "${DEPLOY_TMP:?}/*"
 
-source ${SECRETS_FILE}
+# does replacement of **exported** environment variables enclosed in double braces
+# such as {{API_ROOT}}
+echo "Validating deployment yaml files..."
+for TEMPLATE in $(find "${SCRIPT_DIR}/" -name '*.yaml.template'); do
+  REPLACED_FILE="${DEPLOY_TMP}/$(basename ${TEMPLATE%.*})"
+  "${MO_EXE}" -u "${TEMPLATE}" > "${REPLACED_FILE}"
+  # lint the k8 yaml file
+  "${KUBEVAL_EXE}" "${REPLACED_FILE}"
+done
+
+# shellcheck source=.secrets
+source "${SECRETS_FILE}"
 if [[ -z "${POSTGRES_PASSWORD}" ]]; then
   >&2 echo "ERROR: Envionmental variable POSTGRES_PASSWORD not defined in .secrets file."
   exit 4
@@ -205,7 +239,7 @@ if [[ "$NEW" -eq 1 ]]; then
   # correctly set the ownership of the unarchived files. Therefore
   # a second pod (restore-root) does not mount the global filesystem
   # and can therefore untar the archive with the correct ownership.
-  FILES_TEMP="${FILES_MNT}/$(basename ${FILES_BACKUP_INTERNAL})"
+  FILES_TEMP="${FILES_MNT}/$(basename "${FILES_BACKUP_INTERNAL}")"
   rancher kubectl wait $FLAGS deployment.apps/restore-root --for=condition=available --timeout=60s
   rancher kubectl exec deployment.apps/restore-root $FLAGS -- rm -rf "${FILES_MNT}"/*
   rancher kubectl exec deployment.apps/restore-root $FLAGS -- chmod 777 "${FILES_MNT}"

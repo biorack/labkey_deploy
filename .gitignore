@@ -1,6 +1,6 @@
 .secrets
-.tls.cert
-.tls.key
+.tls.*.cert
+.tls.*.key
 deploy_tmp/
 *.swp
 *.tar

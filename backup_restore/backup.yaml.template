@@ -39,7 +39,7 @@ spec:
                   key: postgres_password
                   name: db
                   optional: false
-            image: @@BACKUP_RESTORE_IMAGE_TAG@@
+            image: {{BACKUP_RESTORE_IMAGE_TAG}}
             imagePullPolicy: Always
             name: backup
             resources: {}
