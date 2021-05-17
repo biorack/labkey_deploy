@@ -103,8 +103,10 @@ FILES_BACKUP="${ROOT_BACKUP_DIR}/${TIMESTAMP}/labkey_files_${TIMESTAMP}.tar.gz"
 DB_BACKUP_INTERNAL="${BACKUP_MNT}/${TIMESTAMP}/labkey_db_${TIMESTAMP}"
 FILES_BACKUP_INTERNAL="${BACKUP_MNT}/${TIMESTAMP}/labkey_files_${TIMESTAMP}.tar.gz"
 
-file_exists_readable_not_empty_or_error "$DB_BACKUP"
-file_exists_readable_not_empty_or_error "$FILES_BACKUP"
+if [[ "$NEW" -eq 1 ]]; then
+  file_exists_readable_not_empty_or_error "$DB_BACKUP"
+  file_exists_readable_not_empty_or_error "$FILES_BACKUP"
+fi
 file_exists_readable_not_empty_or_error "$SECRETS_FILE"
 file_exists_readable_not_empty_or_error "$CERT_FILE"
 file_exists_readable_not_empty_or_error "$KEY_FILE"
