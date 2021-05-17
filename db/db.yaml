@@ -45,7 +45,7 @@ spec:
             command:
             - pg_isready
             - --username=postgres
-          failureThreshold: 2
+          failureThreshold: 3
           initialDelaySeconds: 10
           periodSeconds: 2
           successThreshold: 1
@@ -56,9 +56,9 @@ spec:
             command:
             - pg_isready
             - --username=postgres
-          failureThreshold: 2
+          failureThreshold: 6
           initialDelaySeconds: 10
-          periodSeconds: 2
+          periodSeconds: 10
           successThreshold: 2
           timeoutSeconds: 2
         resources: {}

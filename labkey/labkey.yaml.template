@@ -74,13 +74,13 @@ spec:
           name: webserver
           protocol: TCP
         readinessProbe:
-          failureThreshold: 3
+          failureThreshold: 15
           httpGet:
             path: /admin-healthCheck.api
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 120
-          periodSeconds: 2
+          initialDelaySeconds: 15
+          periodSeconds: 5
           successThreshold: 2
           timeoutSeconds: 2
         resources: {}
