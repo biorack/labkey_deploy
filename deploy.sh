@@ -38,6 +38,7 @@ while [[ "$#" -gt 0 ]]; do
         echo "   -d, --dev           operate on the development cluster (defaults to production)"
 	echo "   -l, --labkey        source of labkey image (required)"
         echo "   -n, --new           delete all resources in namespace and start new instances"
+	echo "                       Restores all data from backup."
 	echo "   -t, --timestamp     timestamp of the backup to use (defaults to most recent)"
         exit 0
         ;;
