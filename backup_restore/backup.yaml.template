@@ -25,6 +25,8 @@ spec:
             cattle.io/timestamp: "2021-01-11T18:22:43Z"
           creationTimestamp: null
         spec:
+	  startingDeadlineSeconds: 600
+	  concurrencyPolicy: Replace
           containers:
           - env:
             - name: POSTGRES_USER
@@ -79,6 +81,7 @@ spec:
             persistentVolumeClaim:
               claimName: labkey-files
   schedule: 1 16 * * *
-  successfulJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 10
+  failedJobsHistoryLimit: 10
   suspend: true
 status: {}
