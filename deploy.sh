@@ -21,6 +21,11 @@ LABKEY=""
 DEV=0
 NEW=0
 
+if [ ! -d "/global/cfs/cdirs" ]; then
+    >&2 echo "ERROR: You must be on a NERSC system to deploy."
+    exit 17
+fi
+
 # default to the most recent directory with a timestamp for a name
 TIMESTAMP=$(ls -1pt "${ROOT_BACKUP_DIR}" | grep -E "^2[0-9]{11}/$" | head -1 | tr -d '/')
 while [[ "$#" -gt 0 ]]; do
