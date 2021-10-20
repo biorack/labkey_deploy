@@ -70,7 +70,6 @@ spec:
         name: labkey
         ports:
         - containerPort: 8080
-          hostPort: 8080
           name: webserver
           protocol: TCP
         readinessProbe:
