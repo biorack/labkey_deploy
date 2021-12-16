@@ -24,8 +24,8 @@ FROM alpine:3 AS labkey_build
 
 ARG LABKEY_EDITION="community"
 ARG LABKEY_MAJOR_VERSION="21"
-ARG LABKEY_MINOR_VERSION="11.1"
-ARG LABKEY_BUILD_VERSION="21.11.1-2"
+ARG LABKEY_MINOR_VERSION="11.3"
+ARG LABKEY_BUILD_VERSION="21.11.3-4"
 ARG LABKEY_BUILD_HOME="/labkey/labkey"
 ARG CATALINA_BUILD_HOME="/labkey/apps/tomcat"
 ARG DOWNLOAD_URL_START="https://lk-binaries.s3-us-west-2.amazonaws.com/downloads/release"
