@@ -18,8 +18,7 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 150Gi
   storageClassName: nfs-client
   volumeMode: Filesystem
-  volumeName: pvc-35419da3-1c03-4650-9cdd-08d57486d274
 status: {}

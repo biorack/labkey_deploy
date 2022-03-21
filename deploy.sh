@@ -223,8 +223,8 @@ rancher kubectl create secret tls metatlas-cert $FLAGS \
 	"--key=${KEY_FILE}"
 
 ## Create persistant volumes
-# rancher kubectl apply $FLAGS -f "${REPO_DIR}/db/db-data.yaml"
-# rancher kubectl apply $FLAGS -f "${REPO_DIR}/labkey/labkey-files.yaml"
+rancher kubectl apply $FLAGS -f "${REPO_DIR}/db/db-data.yaml"
+rancher kubectl apply $FLAGS -f "${REPO_DIR}/labkey/labkey-files.yaml"
 
 ## Create database pod
 rancher kubectl apply $FLAGS -f "${REPO_DIR}/db/db.yaml"
