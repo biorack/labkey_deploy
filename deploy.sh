@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euf -o pipefail
+set -x
 
 # mount points of the persistant volumes
 FILES_MNT=/labkey_files
@@ -115,14 +115,14 @@ if [[ $DEV -eq 1 ]]; then
   PROJECT="c-fwj56:p-lswtz" # development:m2650
   export LONG_FQDN="lb.lims.development.svc.spin.nersc.org"
   export SHORT_FQDN="metatlas-dev.nersc.gov"
-  CERT_FILE="${SCRIPT_DIR}/.tls.labkey-dev.cert"
-  KEY_FILE="${SCRIPT_DIR}/.tls.labkey-dev.key"
+  CERT_FILE="${SCRIPT_DIR}/.tls.metatlas-dev.nersc.gov.pem"
+  KEY_FILE="${SCRIPT_DIR}/.tls.metatlas-dev.nersc.gov.key"
 else
   PROJECT="c-tmq7p:p-gqfz8" # production cluster for m2650. Run 'rancher context switch' to get other values.
   export LONG_FQDN="lb.lims.production.svc.spin.nersc.org"
   export SHORT_FQDN="metatlas.nersc.gov"
-  CERT_FILE="${SCRIPT_DIR}/.tls.labkey.cert"
-  KEY_FILE="${SCRIPT_DIR}/.tls.labkey.key"
+  CERT_FILE="${SCRIPT_DIR}/.tls.metatlas.nersc.gov.pem"
+  KEY_FILE="${SCRIPT_DIR}/.tls.metatlas.nersc.gov.key"
 fi
 
 SECRETS_FILE="${REPO_DIR}/.secrets"
@@ -222,9 +222,11 @@ rancher kubectl create secret tls metatlas-cert $FLAGS \
 	"--cert=${CERT_FILE}" \
 	"--key=${KEY_FILE}"
 
-## Create persistant volumes
-rancher kubectl apply $FLAGS -f "${REPO_DIR}/db/db-data.yaml"
-rancher kubectl apply $FLAGS -f "${REPO_DIR}/labkey/labkey-files.yaml"
+if [[ "$NEW" -eq 1 ]]; then
+  ## Create persistant volumes
+  rancher kubectl apply $FLAGS -f "${REPO_DIR}/db/db-data.yaml"
+  rancher kubectl apply $FLAGS -f "${REPO_DIR}/labkey/labkey-files.yaml"
+fi
 
 ## Create database pod
 rancher kubectl apply $FLAGS -f "${REPO_DIR}/db/db.yaml"

@@ -1,6 +1,9 @@
 .secrets
-.tls.*.cert
-.tls.*.key
+*.cert
+*.key
+*.pem
+*.csr
+*.notes
 deploy_tmp/
 lib/
 *.swp

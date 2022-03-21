@@ -78,11 +78,11 @@ The following instructions can be used to do a new deployment of metatlas LIMS, 
        echo "POSTGRES_PASSWORD=MyPostgresPassWord" > .secrets
        echo "MASTER_ENCRYPTION_KEY=MyLabkeyEncryptionKey" >> .secrets```
 6. In the root directory of the deploy_labkey repo, create the following files containing your TLS private key and certificate:
-  - .tls.key
-  - .tls.cert
+  - .tls.metatlas.nersc.gov.key  (if working with the dev instance, use .tls.metatlas-dev.nersc.gov.key)
+  - .tls.metatlas.nersc.gov.pem  (if working with the dev instance, use .tls.metatlas-dev.nersc.gov.pem)
     - The certificate should be PEM encoded, contain the full chain, and be in reverse order (your cert at top to root cert at bottom).
 7. Ensure the .tls.key file is only readable by you:
-  - `chmod 600 .tls.key
+  - `chmod 600 .tls.metatlas.nersc.gov.keys`
 8. Run the deployment script: `./deploy.sh --labkey registry.spin.nersc.gov/lims/labkey:YYYY-MM-DD-HH-SS --backup registry.spin.nersc.gov/lims/backup_restore:YYYY-MM-DD-HH-SS`
   - You'll need to pass it flags the location of the labkey and backup_restore docker images on the repos. Set the timestamps to match the tags on registry.spin.nersc.gov. The two images will likely have different timestamps!
-  - If doing a new installation, where the persistant volumes do not already contain a populated database and filesystem, then pass the `--new` flag. The `--new` flag will restore backups of both the database and the filesystem where labkey stores files. 
+  - If doing a new installation, where the persistant volumes do not already contain a populated database and filesystem, then pass the `--new` flag. The `--new` flag will restore backups of both the database and the filesystem where labkey stores files. By default, `--new` uses the most recent backups, but you can use `--timestamp` to select a specific backup. 
