@@ -20,12 +20,12 @@
 # increase configuration options.
 
 #temp containter only used for building
-FROM alpine:3 AS labkey_build
+FROM tomcat:9-jdk17-openjdk-slim-buster as labkey_build
 
 ARG LABKEY_EDITION="community"
-ARG LABKEY_MAJOR_VERSION="21"
-ARG LABKEY_MINOR_VERSION="11.4"
-ARG LABKEY_BUILD_VERSION="21.11.4-5"
+ARG LABKEY_MAJOR_VERSION="22"
+ARG LABKEY_MINOR_VERSION="3.0"
+ARG LABKEY_BUILD_VERSION="22.3.0-1"
 ARG LABKEY_BUILD_HOME="/labkey/labkey"
 ARG CATALINA_BUILD_HOME="/labkey/apps/tomcat"
 ARG DOWNLOAD_URL_START="https://lk-binaries.s3-us-west-2.amazonaws.com/downloads/release"
@@ -33,15 +33,21 @@ ARG DOWNLOAD_URL_START="https://lk-binaries.s3-us-west-2.amazonaws.com/downloads
 ARG LABKEY_FULL_VERSION="${LABKEY_BUILD_VERSION}-${LABKEY_EDITION}"
 ARG DOWNLOAD_URL_VERSION="${LABKEY_MAJOR_VERSION}.${LABKEY_MINOR_VERSION}"
 
-RUN apk add --update curl && \
-    mkdir -p ${LABKEY_BUILD_HOME}
+RUN mkdir -p ${LABKEY_BUILD_HOME}
 WORKDIR /labkey
 
 RUN mkdir -p ${LABKEY_BUILD_HOME}/externalModules && \
     mkdir -p ${CATALINA_BUILD_HOME}/lib
 
-RUN curl -LO "${DOWNLOAD_URL_START}/${LABKEY_EDITION}/${DOWNLOAD_URL_VERSION}/LabKey${LABKEY_FULL_VERSION}.tar.gz" && \
-    tar xzf "LabKey${LABKEY_FULL_VERSION}.tar.gz"
+ADD "${DOWNLOAD_URL_START}/${LABKEY_EDITION}/${DOWNLOAD_URL_VERSION}/LabKey${LABKEY_FULL_VERSION}.tar.gz" /labkey/
+
+RUN tar xzf "LabKey${LABKEY_FULL_VERSION}.tar.gz" && \
+    mkdir -p /tmp/old && \
+    cd /tmp/old && \
+    jar -xvf "/labkey/LabKey${LABKEY_FULL_VERSION}/modules/query-22.3.0.module" && \
+    rm "lib/log4j-1.2.14.jar"  && \
+    jar -cvf "/labkey/LabKey${LABKEY_FULL_VERSION}/modules/query-22.3.0.module" META-INF config credits lib olap schemas views web && \
+    rm -rf /tmp/old
 
 RUN cp -R LabKey${LABKEY_FULL_VERSION}/labkeywebapp ${LABKEY_BUILD_HOME} && \
     cp -R LabKey${LABKEY_FULL_VERSION}/modules ${LABKEY_BUILD_HOME} && \
