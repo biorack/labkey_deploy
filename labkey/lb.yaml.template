@@ -4,8 +4,8 @@ metadata:
   annotations:
     field.cattle.io/creatorId: u-kjpiuiv26t
     field.cattle.io/ingressState: '{"bGIvbGltcy9sYi5saW1zLnByb2R1Y3Rpb24uc3ZjLnNwaW4ubmVyc2Mub3JnLy84MDgw":"deployment:lims:labkey","bGIvbGltcy9tZXRhdGxhcy5uZXJzYy5nb3YvLzgwODA=":"deployment:lims:labkey","bWV0YXRsYXMtc2hvcnQtY2VydA==":"lims:metatlas-short-cert"}'
-    field.cattle.io/publicEndpoints: '[{"addresses":["128.55.206.106"],"port":80,"protocol":"HTTP","serviceName":"lims:labkey","ingressName":"lims:lb","hostname":"lb.lims.production.svc.spin.nersc.org","allNodes":true},{"addresses":["128.55.206.106"],"port":443,"protocol":"HTTPS","serviceName":"lims:labkey","ingressName":"lims:lb","hostname":"metatlas.nersc.gov","allNodes":true}]'
-    nersc.gov/clustername: production
+    field.cattle.io/publicEndpoints: '[{"addresses":["128.55.206.106"],"port":80,"protocol":"HTTP","serviceName":"lims:labkey","ingressName":"lims:lb","hostname":"{{LONG_FQDN}}","allNodes":true},{"addresses":["128.55.206.106"],"port":443,"protocol":"HTTPS","serviceName":"lims:labkey","ingressName":"lims:lb","hostname":"{{SHORT_FQDN}}","allNodes":true}]'
+    nersc.gov/clustername: {{CLUSTER}}
     nersc.gov/serveralias: svc
   creationTimestamp: null
   generation: 1
@@ -15,13 +15,13 @@ metadata:
   selfLink: /apis/extensions/v1beta1/namespaces/lims/ingresses/lb
 spec:
   rules:
-  - host: lb.lims.production.svc.spin.nersc.org
+  - host: {{LONG_FQDN}}
     http:
       paths:
       - backend:
           serviceName: labkey
           servicePort: 8080
-  - host: metatlas.nersc.gov
+  - host: {{SHORT_FQDN}}
     http:
       paths:
       - backend:
@@ -29,6 +29,6 @@ spec:
           servicePort: 8080
   tls:
   - hosts:
-    - metatlas.nersc.gov
+    - {{SHORT_FQDN}}
     secretName: metatlas-cert
 status: {}

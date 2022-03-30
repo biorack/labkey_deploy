@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -euo pipefail
 
 # mount points of the persistant volumes
 FILES_MNT=/labkey_files
@@ -27,7 +27,8 @@ if [ ! -d "/global/cfs/cdirs" ]; then
 fi
 
 # default to the most recent directory with a timestamp for a name
-TIMESTAMP=$(ls -1pt "${ROOT_BACKUP_DIR}" | grep -E "^2[0-9]{11}/$" | head -1 | tr -d '/')
+TIMESTAMP=$(ls -1pt "${ROOT_BACKUP_DIR}" | grep -E "^2[0-9]{11}/$" | sed '1!d' | tr -d '/')
+
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     -b|--backup) BACKUP_RESTORE="$2"; shift ;;
@@ -113,17 +114,16 @@ fi
 
 if [[ $DEV -eq 1 ]]; then
   PROJECT="c-fwj56:p-lswtz" # development:m2650
-  export LONG_FQDN="lb.lims.development.svc.spin.nersc.org"
+  export CLUSTER="development"
   export SHORT_FQDN="metatlas-dev.nersc.gov"
-  CERT_FILE="${SCRIPT_DIR}/.tls.metatlas-dev.nersc.gov.pem"
-  KEY_FILE="${SCRIPT_DIR}/.tls.metatlas-dev.nersc.gov.key"
 else
   PROJECT="c-tmq7p:p-gqfz8" # production cluster for m2650. Run 'rancher context switch' to get other values.
-  export LONG_FQDN="lb.lims.production.svc.spin.nersc.org"
+  export CLUSTER="production"
   export SHORT_FQDN="metatlas.nersc.gov"
-  CERT_FILE="${SCRIPT_DIR}/.tls.metatlas.nersc.gov.pem"
-  KEY_FILE="${SCRIPT_DIR}/.tls.metatlas.nersc.gov.key"
 fi
+export LONG_FQDN="lb.lims.${CLUSTER}.svc.spin.nersc.org"
+CERT_FILE="${SCRIPT_DIR}/.tls.${SHORT_FQDN}.pem"
+KEY_FILE="${SCRIPT_DIR}/.tls.${SHORT_FQDN}.key"
 
 SECRETS_FILE="${REPO_DIR}/.secrets"
 
@@ -161,8 +161,11 @@ echo "Validating deployment yaml files..."
 for TEMPLATE in $(find "${SCRIPT_DIR}/" -name '*.yaml.template'); do
   REPLACED_FILE="${DEPLOY_TMP}/$(basename ${TEMPLATE%.*})"
   "${MO_EXE}" -u "${TEMPLATE}" > "${REPLACED_FILE}"
+done
+
+for YAML in $(find "${SCRIPT_DIR}/" -name '*.yaml'); do
   # lint the k8 yaml file
-  "${KUBEVAL_EXE}" "${REPLACED_FILE}"
+  "${KUBEVAL_EXE}" "${YAML}"
 done
 
 # shellcheck source=.secrets
@@ -261,7 +264,7 @@ fi
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/labkey.yaml"
 
 ## Create load balancer
-rancher kubectl apply $FLAGS -f "${REPO_DIR}/labkey/lb.yaml"
+rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/lb.yaml"
 
 ## Create backup pod
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/backup.yaml"
