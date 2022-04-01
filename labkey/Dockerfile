@@ -19,7 +19,7 @@
 # This file has been modified by Joint Genome Institue to enhance security and
 # increase configuration options.
 
-ARG BASE_IMAGE="tomcat:9-jdk17-openjdk-slim-buster"
+ARG BASE_IMAGE="tomcat:9-jdk17-temurin-focal"
 
 #temp containter only used for building
 FROM curlimages/curl:7.82.0 as labkey_build
@@ -59,7 +59,7 @@ ARG CATALINA_BUILD_HOME=/labkey/apps/tomcat
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
     graphviz \
-    postgresql-client-11 \
+    postgresql-client-12 \
     r-base \
     r-base-dev \
     xvfb && \
