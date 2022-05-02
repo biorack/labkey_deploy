@@ -31,6 +31,10 @@ spec:
         workload.user.cattle.io/workloadselector: statefulSet-lims-db
     spec:
       containers:
+      - args:
+        - postgres
+        - -c
+        - max_wal_size=5GB
       - env:
         - name: POSTGRES_PASSWORD
           valueFrom:
