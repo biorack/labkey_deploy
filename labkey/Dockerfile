@@ -19,53 +19,47 @@
 # This file has been modified by Joint Genome Institue to enhance security and
 # increase configuration options.
 
+ARG BASE_IMAGE="tomcat:9-jdk17-temurin-focal"
+
 #temp containter only used for building
-FROM tomcat:9-jdk17-openjdk-slim-buster as labkey_build
+FROM curlimages/curl:7.82.0 as labkey_build
 
 ARG LABKEY_EDITION="community"
 ARG LABKEY_MAJOR_VERSION="22"
-ARG LABKEY_MINOR_VERSION="3.0"
-ARG LABKEY_BUILD_VERSION="22.3.0-1"
+ARG LABKEY_MINOR_VERSION="3"
+ARG LABKEY_PATCH_VERSION="2"
+ARG LABKEY_BUILD_NUM="3"
+ARG LABKEY_VERSION="${LABKEY_MAJOR_VERSION}.${LABKEY_MINOR_VERSION}.${LABKEY_PATCH_VERSION}"
+ARG LABKEY_DISTRIBUTION="${LABKEY_VERSION}-${LABKEY_BUILD_NUM}-${LABKEY_EDITION}"
 ARG LABKEY_BUILD_HOME="/labkey/labkey"
 ARG CATALINA_BUILD_HOME="/labkey/apps/tomcat"
 ARG DOWNLOAD_URL_START="https://lk-binaries.s3-us-west-2.amazonaws.com/downloads/release"
+ARG DOWNLOAD_URL="${DOWNLOAD_URL_START}/${LABKEY_EDITION}/${LABKEY_VERSION}/LabKey${LABKEY_DISTRIBUTION}.tar.gz"
+ARG DOWNLOAD_PATH="/tmp/labkey.tar.gz"
 
-ARG LABKEY_FULL_VERSION="${LABKEY_BUILD_VERSION}-${LABKEY_EDITION}"
-ARG DOWNLOAD_URL_VERSION="${LABKEY_MAJOR_VERSION}.${LABKEY_MINOR_VERSION}"
+USER root
 
-RUN mkdir -p ${LABKEY_BUILD_HOME}
-WORKDIR /labkey
-
-RUN mkdir -p ${LABKEY_BUILD_HOME}/externalModules && \
-    mkdir -p ${CATALINA_BUILD_HOME}/lib
-
-ADD "${DOWNLOAD_URL_START}/${LABKEY_EDITION}/${DOWNLOAD_URL_VERSION}/LabKey${LABKEY_FULL_VERSION}.tar.gz" /labkey/
-
-RUN tar xzf "LabKey${LABKEY_FULL_VERSION}.tar.gz" && \
-    mkdir -p /tmp/old && \
-    cd /tmp/old && \
-    jar -xvf "/labkey/LabKey${LABKEY_FULL_VERSION}/modules/query-22.3.0.module" && \
-    rm "lib/log4j-1.2.14.jar"  && \
-    jar -cvf "/labkey/LabKey${LABKEY_FULL_VERSION}/modules/query-22.3.0.module" META-INF config credits lib olap schemas views web && \
-    rm -rf /tmp/old
-
-RUN cp -R LabKey${LABKEY_FULL_VERSION}/labkeywebapp ${LABKEY_BUILD_HOME} && \
-    cp -R LabKey${LABKEY_FULL_VERSION}/modules ${LABKEY_BUILD_HOME} && \
-    cp -R LabKey${LABKEY_FULL_VERSION}/pipeline-lib ${LABKEY_BUILD_HOME} && \
-    cp LabKey${LABKEY_FULL_VERSION}/tomcat-lib/* ${CATALINA_BUILD_HOME}/lib/
+RUN mkdir -p "${LABKEY_BUILD_HOME}/externalModules" "${CATALINA_BUILD_HOME}/lib" && \
+    curl --silent --location -o "$DOWNLOAD_PATH" "$DOWNLOAD_URL" && \
+    cd "$(dirname "$LABKEY_BUILD_HOME")" && \
+    tar -xzf "$DOWNLOAD_PATH" && \
+    cp -R LabKey${LABKEY_DISTRIBUTION}/labkeywebapp ${LABKEY_BUILD_HOME} && \
+    cp -R LabKey${LABKEY_DISTRIBUTION}/modules ${LABKEY_BUILD_HOME} && \
+    cp -R LabKey${LABKEY_DISTRIBUTION}/pipeline-lib ${LABKEY_BUILD_HOME} && \
+    cp LabKey${LABKEY_DISTRIBUTION}/tomcat-lib/* ${CATALINA_BUILD_HOME}/lib/
 
 COPY bin ${LABKEY_BUILD_HOME}/bin
 RUN chmod +x ${LABKEY_BUILD_HOME}/bin/*
 
 # Build complete. Now compile release on final containter.
-FROM tomcat:9-jdk17-openjdk-slim-buster
+FROM "$BASE_IMAGE"
 
 ARG LABKEY_BUILD_HOME=/labkey/labkey
 ARG CATALINA_BUILD_HOME=/labkey/apps/tomcat
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
     graphviz \
-    postgresql-client-11 \
+    postgresql-client-12 \
     r-base \
     r-base-dev \
     xvfb && \
