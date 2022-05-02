@@ -46,12 +46,12 @@ spec:
             - pg_isready
             - --host=db-0
             - --username=postgres
-            - --timeout=1
+            - --timeout=3
           failureThreshold: 3
-          initialDelaySeconds: 15
-          periodSeconds: 2
+          initialDelaySeconds: 60
+          periodSeconds: 7
           successThreshold: 1
-          timeoutSeconds: 2
+          timeoutSeconds: 4
         name: db
         readinessProbe:
           exec:
@@ -59,12 +59,12 @@ spec:
             - pg_isready
             - --host=db-0
             - --username=postgres
-            - --timeout=1
-          failureThreshold: 6
-          initialDelaySeconds: 5
-          periodSeconds: 5
+            - --timeout=3
+          failureThreshold: 10
+          initialDelaySeconds: 60
+          periodSeconds: 7
           successThreshold: 2
-          timeoutSeconds: 2
+          timeoutSeconds: 4
         resources: {}
         securityContext:
           allowPrivilegeEscalation: false
