@@ -59,7 +59,7 @@ if [[ ! -r "${DOCKERFILE_DIR}/Dockerfile" ]]; then
   exit 1
 fi
 
-${DOCKER} image build --tag "${SHORT_TAG}" "${DOCKERFILE_DIR}"
+${DOCKER} image build --pull --tag "${SHORT_TAG}" "${DOCKERFILE_DIR}"
 
 if [[ "$REGISTRY" != "NONE" ]]; then
   if [[ $(uname -s) == "Darwin" ]]; then
