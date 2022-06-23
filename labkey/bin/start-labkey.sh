@@ -93,6 +93,8 @@ mv ${CATALINA_HOME}/conf/Catalina/localhost/labkey.xml ${CATALINA_HOME}/conf/Cat
 >&2 echo "Starting xvfb..."
 xvfb.sh start
 
+export DISPLAY=":2.0"
+
 # Start Tomcat
 >&2 echo "Starting Labkey"
 catalina.sh run
