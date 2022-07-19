@@ -52,7 +52,7 @@ spec:
             - --username=postgres
             - --timeout=3
           failureThreshold: 3
-          initialDelaySeconds: 
+          initialDelaySeconds: 1
           periodSeconds: 7
           successThreshold: 1
           timeoutSeconds: 4
