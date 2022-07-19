@@ -58,12 +58,12 @@ spec:
         image: {{LABKEY_IMAGE_TAG}}
         imagePullPolicy: Always
         livenessProbe:
-          failureThreshold: 3
+          failureThreshold: 10
           httpGet:
             path: /admin-healthCheck.api
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 120
+          initialDelaySeconds: 1
           periodSeconds: 2
           successThreshold: 1
           timeoutSeconds: 2
@@ -72,15 +72,14 @@ spec:
         - containerPort: 8080
           name: webserver
           protocol: TCP
-        readinessProbe:
-          failureThreshold: 15
+        startupProbe:
           httpGet:
             path: /admin-healthCheck.api
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 15
-          periodSeconds: 5
-          successThreshold: 2
+          failureThreshold: 200
+          periodSeconds: 3
+          successThreshold: 1
           timeoutSeconds: 2
         resources: {}
         securityContext:
