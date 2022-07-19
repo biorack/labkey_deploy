@@ -52,23 +52,11 @@ spec:
             - --username=postgres
             - --timeout=3
           failureThreshold: 3
-          initialDelaySeconds: 60
+          initialDelaySeconds: 
           periodSeconds: 7
           successThreshold: 1
           timeoutSeconds: 4
         name: db
-        readinessProbe:
-          exec:
-            command:
-            - pg_isready
-            - --host=db-0
-            - --username=postgres
-            - --timeout=3
-          failureThreshold: 10
-          initialDelaySeconds: 60
-          periodSeconds: 7
-          successThreshold: 2
-          timeoutSeconds: 4
         resources: {}
         securityContext:
           allowPrivilegeEscalation: false
@@ -84,6 +72,17 @@ spec:
           privileged: false
           readOnlyRootFilesystem: false
           runAsNonRoot: false
+        startupProbe:
+          exec:
+            command:
+            - pg_isready
+            - --host=db-0
+            - --username=postgres
+            - --timeout=3
+          failureThreshold: 100
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 4
         stdin: true
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
