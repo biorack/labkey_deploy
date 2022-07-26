@@ -19,19 +19,19 @@
 # This file has been modified by Joint Genome Institue to enhance security and
 # increase configuration options.
 
-ARG BASE_IMAGE="tomcat:9-jdk17-temurin-focal"
+ARG BASE_IMAGE="tomcat:9-jdk17-temurin-jammy"
 
 # temp image that we will copy some files from
 FROM mambaorg/micromamba:0.24.0 as micromamba
 
 #temp containter only used for building
-FROM curlimages/curl:7.83.1 as labkey_build
+FROM curlimages/curl:7.84.0 as labkey_build
 
 ARG LABKEY_EDITION="community"
 ARG LABKEY_MAJOR_VERSION="22"
-ARG LABKEY_MINOR_VERSION="3"
-ARG LABKEY_PATCH_VERSION="4"
-ARG LABKEY_BUILD_NUM="6"
+ARG LABKEY_MINOR_VERSION="7"
+ARG LABKEY_PATCH_VERSION="0"
+ARG LABKEY_BUILD_NUM="1"
 ARG LABKEY_VERSION="${LABKEY_MAJOR_VERSION}.${LABKEY_MINOR_VERSION}.${LABKEY_PATCH_VERSION}"
 ARG LABKEY_DISTRIBUTION="${LABKEY_VERSION}-${LABKEY_BUILD_NUM}-${LABKEY_EDITION}"
 ARG LABKEY_BUILD_HOME="/labkey/labkey"
