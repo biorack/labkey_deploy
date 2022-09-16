@@ -35,6 +35,14 @@ spec:
         - postgres
         - -c
         - max_wal_size=5GB
+        - -c
+        - shared_buffers=5GB
+        - -c
+        - effective_cache_size=10GB
+        - -c
+        - maintenance_work_mem=512MB
+        - -c
+        - work_mem=24MB
       - env:
         - name: POSTGRES_PASSWORD
           valueFrom:
