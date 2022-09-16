@@ -13,7 +13,7 @@ metadata:
   name: backup
   selfLink: /apis/batch/v1beta1/namespaces/lims/cronjobs/backup
 spec:
-  schedule: 1 16 * * *
+  schedule: 39 9 * * *
   concurrencyPolicy: Replace
   startingDeadlineSeconds: 600
   successfulJobsHistoryLimit: 10
