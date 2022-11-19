@@ -22,16 +22,16 @@
 ARG BASE_IMAGE="tomcat:9-jdk17-temurin-jammy"
 
 # temp image that we will copy some files from
-FROM mambaorg/micromamba:0.24.0 as micromamba
+FROM mambaorg/micromamba:1.0.0 as micromamba
 
 #temp containter only used for building
-FROM curlimages/curl:7.84.0 as labkey_build
+FROM curlimages/curl:7.86.0 as labkey_build
 
 ARG LABKEY_EDITION="community"
 ARG LABKEY_MAJOR_VERSION="22"
-ARG LABKEY_MINOR_VERSION="7"
-ARG LABKEY_PATCH_VERSION="4"
-ARG LABKEY_BUILD_NUM="8"
+ARG LABKEY_MINOR_VERSION="11"
+ARG LABKEY_PATCH_VERSION="0"
+ARG LABKEY_BUILD_NUM="2"
 ARG LABKEY_VERSION="${LABKEY_MAJOR_VERSION}.${LABKEY_MINOR_VERSION}.${LABKEY_PATCH_VERSION}"
 ARG LABKEY_DISTRIBUTION="${LABKEY_VERSION}-${LABKEY_BUILD_NUM}-${LABKEY_EDITION}"
 ARG LABKEY_BUILD_HOME="/labkey/labkey"
@@ -104,12 +104,12 @@ ENV DATABASE_PORT=5432
 
 USER $MAMBA_USER
 
-COPY --chown=$MAMBA_USER:$MAMBA_USER python.lock /tmp/python.lock
-COPY --chown=$MAMBA_USER:$MAMBA_USER R_tidyverse.lock /tmp/R_tidyverse.lock
-COPY --chown=$MAMBA_USER:$MAMBA_USER R_smkosina01.lock /tmp/R_smkosina01.lock
-RUN micromamba create --yes --name python --file /tmp/python.lock && \
-    micromamba create --yes --name R_tidyverse --file /tmp/R_tidyverse.lock && \
-    micromamba create --yes --name R_smkosina01 --file /tmp/R_smkosina01.lock && \
+COPY --chown=$MAMBA_USER:$MAMBA_USER python-lock.yaml /tmp/python-lock.yaml
+COPY --chown=$MAMBA_USER:$MAMBA_USER R_tidyverse-lock.yaml /tmp/R_tidyverse-lock.yaml
+COPY --chown=$MAMBA_USER:$MAMBA_USER R_smkosina01-lock.yaml /tmp/R_smkosina01-lock.yaml
+RUN micromamba create --yes --name python --file /tmp/python-lock.yaml && \
+    micromamba create --yes --name R_tidyverse --file /tmp/R_tidyverse-lock.yaml && \
+    micromamba create --yes --name R_smkosina01 --file /tmp/R_smkosina01-lock.yaml && \
     micromamba run --name R_smkosina01 \
         R --slave -e "install.packages('growthrates', repos='http://cran.us.r-project.org')" && \
     micromamba clean --all --yes
