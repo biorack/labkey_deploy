@@ -36,7 +36,9 @@ spec:
         - -c
         - max_wal_size=5GB
         - -c
-        - shared_buffers=5GB
+        - shared_buffers=8GB
+        - -c
+        - max_locks_per_transaction=256
         - -c
         - effective_cache_size=10GB
         - -c
