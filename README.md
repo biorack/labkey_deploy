@@ -86,3 +86,36 @@ The following instructions can be used to do a new deployment of metatlas LIMS, 
 8. Run the deployment script: `./deploy.sh --labkey registry.spin.nersc.gov/lims/labkey:YYYY-MM-DD-HH-SS --backup registry.spin.nersc.gov/lims/backup_restore:YYYY-MM-DD-HH-SS`
   - You'll need to pass it flags the location of the labkey and backup_restore docker images on the repos. Set the timestamps to match the tags on registry.spin.nersc.gov. The two images will likely have different timestamps!
   - If doing a new installation, where the persistant volumes do not already contain a populated database and filesystem, then pass the `--new` flag. The `--new` flag will restore backups of both the database and the filesystem where labkey stores files. By default, `--new` uses the most recent backups, but you can use `--timestamp` to select a specific backup. 
+
+## Labkey Upgrade Instructions
+
+1. `cd labkey`
+1. Edit `Dockerfile` to have the correct values in these lines:
+   ```
+   ARG LABKEY_MAJOR_VERSION="23"
+   ARG LABKEY_MINOR_VERSION="3"
+   ARG LABKEY_PATCH_VERSION="1"
+   ARG LABKEY_BUILD_NUM="4"
+   ```
+   You can find these values by filling out the [Labkey download
+   request form](https://www.labkey.com/download-community-edition/)
+   and then looking at the URL for the tar.gz download.
+1. `./build.sh`
+1. The last line of output will container an image tag in the form
+   `YYYY-MM-DD-HH-MM`. Copy this value.
+1. Go to
+   [https://rancher2.spin.nersc.gov/p/c-tmq7p:p-gqfz8/workload/deployment:lims:labkey]
+1. Reduce the 'config scale' to 0
+1. Wait for the running pod to be fully removed
+1. Click the triple-dot button in near the upper right corner of the Ranche2
+   web page and then select 'Edit' from the dropdown menu.
+1. Replace the tag in the 'Docker image' field
+1. Click 'Save' button
+1. Go to
+   [https://rancher2.spin.nersc.gov/p/c-tmq7p:p-gqfz8/workload/deployment:lims:labkey]
+1. Set the 'config scale' to 1
+1. Wait for the LabKey pod to come up and be ready. You may want to view the
+   pod logs while you wait to see if there are any errors -- see the
+   triple-dot menu at the right side of the pod row.
+1. Go to [https://metatlas.nersc.gov/] to verify the server is working.
+
