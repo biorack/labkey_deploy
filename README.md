@@ -118,4 +118,5 @@ The following instructions can be used to do a new deployment of metatlas LIMS, 
    pod logs while you wait to see if there are any errors -- see the
    triple-dot menu at the right side of the pod row.
 1. Go to [https://metatlas.nersc.gov/] to verify the server is working.
-
+1. Commit and push your changes to this repo, so that the master branch matches
+   the current production configuration.
