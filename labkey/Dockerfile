@@ -22,7 +22,7 @@
 ARG BASE_IMAGE="tomcat:9-jdk17-temurin-jammy"
 
 # temp image that we will copy some files from
-FROM mambaorg/micromamba:1.3.1 as micromamba
+FROM mambaorg/micromamba:1.4.1 as micromamba
 
 #temp containter only used for building
 FROM curlimages/curl:8.00.1 as labkey_build
@@ -30,8 +30,8 @@ FROM curlimages/curl:8.00.1 as labkey_build
 ARG LABKEY_EDITION="community"
 ARG LABKEY_MAJOR_VERSION="23"
 ARG LABKEY_MINOR_VERSION="3"
-ARG LABKEY_PATCH_VERSION="1"
-ARG LABKEY_BUILD_NUM="4"
+ARG LABKEY_PATCH_VERSION="2"
+ARG LABKEY_BUILD_NUM="5"
 ARG LABKEY_VERSION="${LABKEY_MAJOR_VERSION}.${LABKEY_MINOR_VERSION}.${LABKEY_PATCH_VERSION}"
 ARG LABKEY_DISTRIBUTION="${LABKEY_VERSION}-${LABKEY_BUILD_NUM}-${LABKEY_EDITION}"
 ARG LABKEY_BUILD_HOME="/labkey/labkey"
