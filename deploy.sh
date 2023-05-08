@@ -102,13 +102,13 @@ if [[ ! -x "${MO_EXE}" ]]; then
   chmod +x "${MO_EXE}"
 fi
 
-# Get dependency kubeval
-KUBEVAL_EXE="${SCRIPT_DIR}/lib/kubeval"
+# Get dependency kubeconform
+KUBEVAL_EXE="${SCRIPT_DIR}/lib/kubeconform"
 if [[ ! -x "${KUBEVAL_EXE}" ]]; then
   mkdir -p "$(dirname "$KUBEVAL_EXE")"
   pushd "$(dirname "$KUBEVAL_EXE")"
-  curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | \
-          tar xvz "$(basename "$KUBEVAL_EXE")"
+  curl -sL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz \
+  | tar xvz "$(basename "$KUBEVAL_EXE")"
   popd
 fi
 
