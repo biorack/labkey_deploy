@@ -163,7 +163,7 @@ for TEMPLATE in $(find "${SCRIPT_DIR}/" -name '*.yaml.template'); do
   "${MO_EXE}" -u "${TEMPLATE}" > "${REPLACED_FILE}"
 done
 
-for YAML in $(find "${SCRIPT_DIR}/" -name '*.yaml'); do
+for YAML in $(find "${SCRIPT_DIR}/" -name '*.yaml' ! -name 'python*.yaml' ! -name 'R_*.yaml'); do
   # lint the k8 yaml file
   "${KUBEVAL_EXE}" "${YAML}"
 done
