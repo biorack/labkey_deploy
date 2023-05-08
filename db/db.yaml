@@ -45,7 +45,7 @@ spec:
         - maintenance_work_mem=512MB
         - -c
         - work_mem=24MB
-      - env:
+        env:
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
