@@ -7,6 +7,7 @@ BACKUP_MNT=/backups
 
 SPIN_MODULE="spin/2.0"
 RANCHER_MAJOR_VERSION_REQUIRED=2
+K8S_VERSION=1.20.15
 
 NAMESPACE="lims"
 # default options to pass to kubectl
@@ -165,7 +166,7 @@ done
 
 for YAML in $(find "${SCRIPT_DIR}/" -name '*.yaml' ! -name 'python*.yaml' ! -name 'R_*.yaml'); do
   # lint the k8 yaml file
-  "${KUBEVAL_EXE}" "${YAML}"
+  "${KUBEVAL_EXE}" -kubernetes-version "${K8S_VERSION}" "${YAML}"
 done
 
 # shellcheck source=.secrets
