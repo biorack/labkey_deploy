@@ -52,7 +52,7 @@ spec:
               key: postgres_password
               name: db
               optional: false
-        image: postgres:12-alpine
+        image: postgres:15-alpine
         imagePullPolicy: IfNotPresent
         name: db
         resources: {}
