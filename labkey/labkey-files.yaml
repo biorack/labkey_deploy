@@ -3,7 +3,6 @@ kind: PersistentVolumeClaim
 metadata:
   annotations:
     field.cattle.io/creatorId: u-m44hajazl7
-    pv.kubernetes.io/bind-completed: "yes"
     pv.kubernetes.io/bound-by-controller: "yes"
     volume.beta.kubernetes.io/storage-provisioner: cluster.local/3par-nfs-client-provisioner
   creationTimestamp: null
