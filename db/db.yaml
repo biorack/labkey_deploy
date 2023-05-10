@@ -88,6 +88,8 @@ spec:
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: vol1
+        - mountPath: /dev/shm
+          name: dshm
       dnsConfig: {}
       dnsPolicy: ClusterFirst
       restartPolicy: Always
