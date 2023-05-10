@@ -98,6 +98,10 @@ spec:
       - name: vol1
         persistentVolumeClaim:
           claimName: db-data
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
   updateStrategy:
     type: RollingUpdate
 status: 
