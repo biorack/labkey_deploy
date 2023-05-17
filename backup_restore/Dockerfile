@@ -1,4 +1,4 @@
-FROM postgres:12-alpine
+FROM postgres:15-alpine
 
 RUN apk --no-cache add openssh-client
 
