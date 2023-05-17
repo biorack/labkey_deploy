@@ -22,11 +22,11 @@ $ tree -L 2
 ├── README.md
 ├── backup_restore
 │   ├── Dockerfile
-│   ├── backup.yaml
+│   ├── backup.yaml.template
 │   ├── bin
 │   ├── build.sh
-│   ├── restore-root.yaml
-│   └── restore.yaml
+│   ├── restore-root.yaml.template
+│   └── restore.yaml.template
 ├── build.sh
 ├── db
 │   ├── db-data.yaml
@@ -35,29 +35,49 @@ $ tree -L 2
 ├── get-cert
 │   ├── get-cert.sh
 │   └── get-cert.yaml
-├── labkey
-│   ├── Dockerfile
-│   ├── bin
-│   ├── build.sh
-│   ├── config
-│   ├── labkey-files.yaml
-│   ├── labkey.yaml
-│   └── lb.yaml
-└── migrate_to_spin2
-    ├── shutdown-metatlas-dev.sh
-    └── workflow.md
+└── labkey
+    ├── Dockerfile
+    ├── R_smkosina01-lock.yaml
+    ├── R_smkosina01.yaml
+    ├── R_tidyverse-lock.yaml
+    ├── R_tidyverse.yaml
+    ├── bin
+    ├── build.sh
+    ├── config
+    ├── labkey-files.yaml
+    ├── labkey.yaml.template
+    ├── lb.yaml.template
+    ├── python-lock.yaml
+    ├── python.yaml
+    └── update_lock.sh
 
-8 directories, 20 files
+8 directories, 25 files
 $
 ```
 
-Each subdirectory in this repo, except migrate_to_spin2, corresponds to a pod within the workload.
-- backup_restore: Daily cron job that performs a backup of the database and files (within /usr/local/labkey/files/) to the global filesystem at /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump. Also can be used to before data restores.
-- db: postgres database
-- get-cert: For obtaining a temporary cert from [Let's Encyrpt](https://letsencrypt.org/) for use during testing. Nominally not running.
-- labkey: LabKey community edition web application running on top of Apache Tomcat.
+Each subdirectory in this repo corresponds to a pod within the workload.
+- `backup_restore`: Daily cron job that performs a backup of the database and
+  files (within `/usr/local/labkey/files/`) to the global filesystem at
+  `/global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump`. Also can be
+  used to before data restores.
+- `db`: postgres database
+- `get-cert`: For obtaining a temporary cert from
+  [Let's Encyrpt](https://letsencrypt.org/) for use during testing.
+  Nominally not running.
+- `labkey`: LabKey community edition web application running on top of Apache
+  Tomcat.
 
-Each subdirectory contains a kubernetes .yaml file used to configure a pod. All of the pods except for labkey and backup_restore make use of externally generated container images pulled from [docker hub](https://www.dockerhub.com/). 
+Each subdirectory contains a kubernetes `.yaml` file used to configure a pod.
+All of the pods except for labkey and backup_restore make use of externally
+generated container images pulled from [docker hub](https://www.dockerhub.com/). 
+
+The `python.yaml` and `R_*.yaml` files in the `labkey` directory define conda
+environment which are available from the LabKey webserver to run user scripts.
+These environments also have corresponding
+[lock files](https://github.com/conda/conda-lock) named `*-lock.yaml`. After
+updating an environment yaml file, run `update_lock.sh example.yaml` to
+generate an updated lock file. The lock file must be generated before building
+the labkey container.
 
 ## Deployment Instructions
 
