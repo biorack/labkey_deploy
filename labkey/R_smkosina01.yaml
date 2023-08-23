@@ -2,7 +2,7 @@ name: R_smkosina01
 channels:
   - conda-forge
 dependencies:
-  - r-base=4.2.2
+  - r-base=4.3.1
   - r-gplots
   - r-plyr
   - r-zoo
