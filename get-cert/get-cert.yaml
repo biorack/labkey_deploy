@@ -5,10 +5,10 @@ metadata:
     deployment.kubernetes.io/revision: "4"
     field.cattle.io/creatorId: u-m44hajazl7
     field.cattle.io/publicEndpoints: "null"
-    nersc.gov/gid: "94014"
-    nersc.gov/gids: 124,57331,57338,60734,72473,5242,94014
-    nersc.gov/uid: "94014"
-    nersc.gov/username: wjholtz
+    nersc.gov/gid: "97932"
+    nersc.gov/gids: 97932,60734,72473
+    nersc.gov/uid: "97932"
+    nersc.gov/username: msdata
   creationTimestamp: null
   generation: 1
   labels:
