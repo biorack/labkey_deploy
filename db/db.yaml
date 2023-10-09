@@ -3,10 +3,10 @@ kind: StatefulSet
 metadata:
   annotations:
     field.cattle.io/creatorId: u-m44hajazl7
-    nersc.gov/gid: "94014"
-    nersc.gov/gids: 124,55809,55731,57331,57338,60734,72473,5242,76870,94014
-    nersc.gov/uid: "94014"
-    nersc.gov/username: wjholtz
+    nersc.gov/gid: "97932"
+    nersc.gov/gids: 97932,60734,72473
+    nersc.gov/uid: "97932"
+    nersc.gov/username: msdata
   creationTimestamp: null
   generation: 1
   labels:

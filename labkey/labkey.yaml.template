@@ -5,10 +5,10 @@ metadata:
     deployment.kubernetes.io/revision: "35"
     field.cattle.io/creatorId: u-m44hajazl7
     field.cattle.io/publicEndpoints: '[{"addresses":["128.55.206.100"],"port":80,"protocol":"HTTP","serviceName":"lims:ingress-d797f3ea45e40671a8f16d32e4ff20f2","ingressName":"lims:lb","hostname":"{{LONG_FQDN}}","allNodes":true}]'
-    nersc.gov/gid: "94014"
-    nersc.gov/gids: 124,55809,55731,57331,57338,60734,72473,5242,76870,94014
-    nersc.gov/uid: "94014"
-    nersc.gov/username: wjholtz
+    nersc.gov/gid: "97932"
+    nersc.gov/gids: 97932,60734,72473
+    nersc.gov/uid: "97932"
+    nersc.gov/username: msdata
   creationTimestamp: null
   generation: 1
   labels:
