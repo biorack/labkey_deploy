@@ -218,11 +218,13 @@ fi
 
 if [[ "$NEW" -eq 1 ]]; then
   # clean up any existing resources to start a new deployment
-  rancher kubectl delete deployments,statefulsets,cronjobs,services,secrets,pods --all $FLAGS
+  rancher kubectl delete deployments,statefulsets,cronjobs,services,pods --all $FLAGS
+  rancher kubectl delete pvc --all $FLAGS
 fi
 
-# I think it is safe to delete secrets if they are recreated immediately
-rancher kubectl delete secrets --all $FLAGS
+rancher kubectl delete secret db $FLAGS || true
+rancher kubectl delete secret labkey $FLAGS || true
+rancher kubectl delete secret metatlas-cert $FLAGS || true
 
 # start building up the new instance
 rancher kubectl create secret generic db $FLAGS \
