@@ -80,6 +80,8 @@ spec:
           name: vol2
       dnsConfig: {}
       dnsPolicy: ClusterFirst
+      imagePullSecrets:
+       - name: registry-nersc
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext:
