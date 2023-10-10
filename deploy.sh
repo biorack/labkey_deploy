@@ -85,8 +85,8 @@ function file_exists_readable_not_empty_or_error () {
 }
 
 function file_safe_secret_or_error() {
-  if [ "$(stat -c %a "$1")" != 600 ]; then
-    >&2 echo "ERROR: ${1} must have file permissions 600."
+  if [ $(stat -c %a "$1") != 600 ] && [ $(stat -c %a "$1") != 660 ]; then
+    >&2 echo "ERROR: ${1} must have file permissions 600 or 660."
     exit 3 
   fi
   return 0
