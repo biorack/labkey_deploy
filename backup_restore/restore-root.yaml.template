@@ -75,6 +75,8 @@ spec:
           name: vol1
       dnsConfig: {}
       dnsPolicy: ClusterFirst
+      imagePullSecrets:
+       - name: registry-nersc
       restartPolicy: Always
       schedulerName: default-scheduler
       terminationGracePeriodSeconds: 30

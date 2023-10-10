@@ -99,6 +99,8 @@ spec:
         - mountPath: /usr/local/labkey/files
           name: vol2
       dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: registry-nersc
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext:
