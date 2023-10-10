@@ -77,7 +77,7 @@ These environments also have corresponding
 [lock files](https://github.com/conda/conda-lock) named `*-lock.yaml`. After
 updating an environment yaml file, run `update_lock.sh example.yaml` to
 generate an updated lock file. The lock file must be generated before building
-the labkey container.
+the `labkey` container.
 
 ## Deployment Instructions
 
@@ -89,7 +89,7 @@ The following instructions can be used to do a new deployment of metatlas LIMS, 
 3. Build and push images to [registry.spin.nersc.gov](https://registry.spin.nersc.gov):
   - `docker login registry.spin.nersc.gov`
   - `./labkey_deploy/build.sh --all`
-4. Git clone this repo to a cori login node:
+4. Git clone this repo to a perlmutter login node:
   - `git clone https://github.com/biorack/labkey_deploy`
 5. In the root directory of the deploy_labkey repo, create a .secrets file:
   - ```cd labkey_deploy
@@ -119,21 +119,21 @@ The following instructions can be used to do a new deployment of metatlas LIMS, 
    ```
    You can find these values by filling out the [Labkey download
    request form](https://www.labkey.com/download-community-edition/)
-   and then looking at the URL for the tar.gz download.
+   and then looking at the URL for the `tar.gz` download.
 1. `./build.sh`
 1. The last line of output will container an image tag in the form
    `YYYY-MM-DD-HH-MM`. Copy this value.
 1. Go to the [LabKey pod page](
-   https://rancher2.spin.nersc.gov/p/c-tmq7p:p-gqfz8/workload/deployment:lims:labkey)
-1. Reduce the 'config scale' to 0
+   https://rancher2.spin.nersc.gov/dashboard/c/c-tmq7p/explorer/apps.deployment/lims/labkey#pods)
+1. Reduce the 'Scale' to 0
 1. Wait for the running pod to be fully removed
-1. Click the triple-dot button in near the upper right corner of the Ranche2
-   web page and then select 'Edit' from the dropdown menu.
-1. Replace the tag in the 'Docker image' field
+1. Click the triple-dot button in near the upper right corner of the Rancher2
+   web page and then select 'Edit Config' from the dropdown menu.
+1. Replace the tag in the 'Container image' field
 1. Click 'Save' button
 1. Go back to the [LabKey pod page](
-   https://rancher2.spin.nersc.gov/p/c-tmq7p:p-gqfz8/workload/deployment:lims:labkey)
-1. Set the 'config scale' to 1
+   https://rancher2.spin.nersc.gov/dashboard/c/c-tmq7p/explorer/apps.deployment/lims/labkey#pods)
+1. Set the 'Scale' to 1
 1. Wait for the LabKey pod to come up and be ready. You may want to view the
    pod logs while you wait to see if there are any errors -- see the
    triple-dot menu at the right side of the pod row.
