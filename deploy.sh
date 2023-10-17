@@ -163,6 +163,10 @@ DEPLOY_TMP="${SCRIPT_DIR}/deploy_tmp"
 mkdir -p "$DEPLOY_TMP"
 rm -rf "${DEPLOY_TMP:?}/*"
 
+if declare -F module; then
+  module load "${SPIN_MODULE}"
+fi
+
 # does replacement of **exported** environment variables enclosed in double braces
 # such as {{API_ROOT}}
 echo "Validating deployment yaml files..."
@@ -186,10 +190,6 @@ fi
 if [[ -z "${MASTER_ENCRYPTION_KEY}" ]]; then
   >&2 echo "ERROR: Envionmental variable MASTER_ENCRYPTION_KEY not defined in .secrets file."
   exit 5
-fi
-
-if declare -F module; then
-  module load "${SPIN_MODULE}"
 fi
 
 if ! which rancher; then
