@@ -14,7 +14,7 @@ location=$2/src/$(basename $url)
 curl -o $location --create-dirs $url
 
 # Move to the labkey repo directory and extract jar
-tar xzvf $location --include='LabKey*labkeyServer*.jar' --include='VERSION' --strip-components 1 -C $2
+tar xzvf $location --include='labkeyServer.jar' --include='VERSION' --strip-components 1 -C $2
 
 # Remove the tar file
 rm $location

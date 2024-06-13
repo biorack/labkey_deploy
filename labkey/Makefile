@@ -49,7 +49,7 @@ $(shell printf "%steamcity[progressMessage '%s%n']" '##' '$1' ; )
 endef
 
 ifeq (1,$(NEW_DOWNLOAD))
-$(shell ./scripts/download_lims_distribution.sh $(LABKEY_VERSION) ./labkey/)
+$(shell ./scripts/download_lims_distribution.sh $(LABKEY_VERSION) ./)
 endif
 
 .PHONY: all build tag login push up up-build down clean
