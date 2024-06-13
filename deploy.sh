@@ -54,7 +54,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 function k8s_version() {
-  rancher kubectl version \
+  rancher kubectl version --short=true \
   | grep '^Server Version:' \
   | tr -d ' v'  \
   | cut -d: -f2
