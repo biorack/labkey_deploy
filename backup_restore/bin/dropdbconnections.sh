@@ -10,7 +10,7 @@ fi
 
 if [ "$( psql -tAc "SELECT 1 FROM pg_database WHERE datname='$DB'" )" != '1' ]
 then
-  echo "Database does not exist. Not futhere action needed."
+  echo "Database does not exist to drop. No futher action needed for creating new DB connection."
   exit 0
 fi
 
