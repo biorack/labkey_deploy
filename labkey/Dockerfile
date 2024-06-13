@@ -20,6 +20,8 @@ ARG LABKEY_VERSION
 ARG LABKEY_DISTRIBUTION
 ARG LABKEY_EK
 
+USER root
+
 # dependent ENVs declared separately
 ENV POSTGRES_USER="postgres" \
     \
@@ -309,7 +311,7 @@ RUN micromamba create --yes --name python --file /tmp/python-lock.yaml && \
 ####### Carryover from previous LIMS deployment ###############
 ###############################################################
 
-USER labkey
+#USER labkey
 
 # shell form e.g. executed w/ /bin/sh -c
 ENTRYPOINT ["/entrypoint.sh"]
