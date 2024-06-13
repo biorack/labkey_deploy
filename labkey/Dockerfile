@@ -20,7 +20,7 @@ ARG LABKEY_VERSION
 ARG LABKEY_DISTRIBUTION
 ARG LABKEY_EK
 
-USER root
+#USER root
 
 # dependent ENVs declared separately
 ENV POSTGRES_USER="postgres" \
@@ -39,7 +39,7 @@ ENV DEBUG="${DEBUG}" \
     CATALINA_HOME="${TOMCAT_BASE_DIR}" \
     \
     POSTGRES_PASSWORD= \
-    POSTGRES_HOST="localhost" \
+    POSTGRES_HOST="db" \
     POSTGRES_PORT="5432" \
     POSTGRES_DB="${POSTGRES_USER}" \
     POSTGRES_PARAMETERS= \
@@ -311,7 +311,9 @@ RUN micromamba create --yes --name python --file /tmp/python-lock.yaml && \
 ####### Carryover from previous LIMS deployment ###############
 ###############################################################
 
-USER root
+ENV PATH="${PATH}:${LABKEY_HOME}"
+
+#USER root
 
 # shell form e.g. executed w/ /bin/sh -c
 ENTRYPOINT ["/entrypoint.sh"]
