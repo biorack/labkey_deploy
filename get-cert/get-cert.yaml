@@ -5,17 +5,17 @@ metadata:
     deployment.kubernetes.io/revision: "4"
     field.cattle.io/creatorId: u-m44hajazl7
     field.cattle.io/publicEndpoints: "null"
-    nersc.gov/gid: "97932"
-    nersc.gov/gids: 97932,60734,72473
-    nersc.gov/uid: "97932"
+    nersc.gov/gid: "104741"
+    nersc.gov/gids: 97932,60734,72473,104741
+    nersc.gov/uid: "104741"
     nersc.gov/username: msdata
   creationTimestamp: null
   generation: 1
   labels:
     cattle.io/creator: norman
-    workload.user.cattle.io/workloadselector: deployment-lims-get-cert
+    workload.user.cattle.io/workloadselector: deployment-lims-24-get-cert
   name: get-cert
-  selfLink: /apis/apps/v1/namespaces/lims/deployments/get-cert
+  selfLink: /apis/apps/v1/namespaces/lims-24/deployments/get-cert
 spec:
   paused: false
   progressDeadlineSeconds: 600
@@ -23,7 +23,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      workload.user.cattle.io/workloadselector: deployment-lims-get-cert
+      workload.user.cattle.io/workloadselector: deployment-lims-24-get-cert
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -35,7 +35,7 @@ spec:
         cattle.io/timestamp: "2021-01-04T20:15:34Z"
       creationTimestamp: null
       labels:
-        workload.user.cattle.io/workloadselector: deployment-lims-get-cert
+        workload.user.cattle.io/workloadselector: deployment-lims-24-get-cert
     spec:
       containers:
       - command:

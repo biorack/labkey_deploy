@@ -4,7 +4,7 @@ metadata:
   annotations:
     field.cattle.io/creatorId: u-m44hajazl7
     nersc.gov/gid: "60734"
-    nersc.gov/gids: 97932,60734,72473
+    nersc.gov/gids: 97932,60734,72473,104741
     nersc.gov/uid: "104741"
     nersc.gov/username: msdata
   creationTimestamp: null
