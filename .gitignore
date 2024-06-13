@@ -6,7 +6,7 @@ mounts/modules/*
 pgdata/
 *.sql
 .vscode
-labkey/src/*.tar.gz
+labkey/src/
 *.code-workspace
 startup/lims_starter-with-startup.properties
 startup/samplemanagement-with-startup.properties
