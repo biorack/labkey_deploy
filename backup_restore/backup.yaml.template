@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup
+  annotations:
+    field.cattle.io/description: Backup database and data files
+  labels:
+    {}
+  namespace: lims-24
+spec:
+  jobTemplate:
+    metadata:
+      labels:
+        {}
+    spec:
+      template:
+        spec:
+          affinity:
+          containers:
+            - imagePullPolicy: Always
+              name: backup
+              image: {{BACKUP_RESTORE_IMAGE_TAG}}
+              volumeMounts:
+                - name: vol1
+                  mountPath: /backups
+                - name: vol2
+                  mountPath: /labkey_files
+              env:
+                - name: POSTGRES_USER
+                  value: postgres
+                - name: FILES_SRC
+                  value: /labkey_files
+                - name: TZ
+                  value: America/Los_Angeles
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: postgres_password
+                      name: db
+                      optional: false
+                - name: POSTGRES_USER
+                  value: postgres
+              securityContext:
+                readOnlyRootFilesystem: false
+                capabilities:
+                  add:
+                    - NET_BIND_SERVICE
+                  drop:
+                    - ALL
+                privileged: false
+                allowPrivilegeEscalation: false
+                runAsUser: 104741
+          imagePullSecrets:
+            - name: registry-nersc
+          initContainers:
+          restartPolicy: Never
+          securityContext:
+            fsGroup: 60734
+          volumes:
+            - hostPath:
+                type: Directory
+                path: /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump/lims-24
+              name: vol1
+            - persistentVolumeClaim:
+                claimName: labkey-files
+              name: vol2
+  schedule: 39 9 * * *

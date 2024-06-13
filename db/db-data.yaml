@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    field.cattle.io/creatorId: u-m44hajazl7
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-provisioner: cluster.local/3par-nfs-client-provisioner
+  creationTimestamp: null
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    cattle.io/creator: norman
+  name: db-data
+  selfLink: /api/v1/namespaces/lims/persistentvolumeclaims/db-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 150Gi
+  storageClassName: nfs-client
+  volumeMode: Filesystem
+status: {}

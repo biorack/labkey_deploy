@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    field.cattle.io/creatorId: u-m44hajazl7
+    nersc.gov/gid: "60734"
+    nersc.gov/gids: 97932,60734,72473
+    nersc.gov/uid: "104741"
+    nersc.gov/username: msdata
+  creationTimestamp: null
+  generation: 1
+  labels:
+    cattle.io/creator: norman
+    workload.user.cattle.io/workloadselector: statefulSet-lims-24-db
+  name: db
+  selfLink: /apis/apps/v1/namespaces/lims-24/statefulsets/db
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      workload.user.cattle.io/workloadselector: statefulSet-lims-24-db
+  serviceName: database
+  template:
+    metadata:
+      annotations:
+        cattle.io/timestamp: "2021-01-07T22:38:46Z"
+      creationTimestamp: null
+      labels:
+        workload.user.cattle.io/workloadselector: statefulSet-lims-24-db
+    spec:
+      containers:
+      - args:
+        - postgres
+        - -c
+        - max_wal_size=5GB
+        - -c
+        - shared_buffers=8GB
+        - -c
+        - max_locks_per_transaction=256
+        - -c
+        - effective_cache_size=10GB
+        - -c
+        - maintenance_work_mem=512MB
+        - -c
+        - work_mem=24MB
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgres_password
+              name: db
+              optional: false
+        image: postgres:15-alpine
+        imagePullPolicy: IfNotPresent
+        name: db
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            add:
+            - CHOWN
+            - DAC_OVERRIDE
+            - FOWNER
+            - SETGID
+            - SETUID
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: false
+        startupProbe:
+          exec:
+            command:
+            - pg_isready
+            - --host=db-0
+            - --username=postgres
+            - --timeout=3
+          failureThreshold: 1000
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 4
+        stdin: true
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        tty: true
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: vol1
+        - mountPath: /dev/shm
+          name: dshm
+      dnsConfig: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: vol1
+        persistentVolumeClaim:
+          claimName: db-data
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+  updateStrategy:
+    type: RollingUpdate
+status: 
+  replicas: 1
