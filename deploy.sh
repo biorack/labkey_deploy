@@ -259,7 +259,7 @@ rancher kubectl rollout status $FLAGS statefulset/db
 if [[ "$NEW" -eq 1 ]]; then
   ## Restore labkey database
   echo "Restore labkey database..."
-  echo "Waiting 60s for restore pod to be available..."
+  echo "Waiting for restore pod to be available..."
   rancher kubectl wait $FLAGS deployment.apps/restore --for=condition=available --timeout=60s
   echo "Running restore.sh..."
   rancher kubectl exec deployment.apps/restore $FLAGS -- /restore.sh "${DB_BACKUP_INTERNAL}"
@@ -273,10 +273,11 @@ if [[ "$NEW" -eq 1 ]]; then
   echo "Labkey files mount point: $FILES_MNT"
   echo "Subdirectory for files: $FILES_BACKUP_INTERNAL"
   FILES_TEMP="${FILES_MNT}/$(basename "${FILES_BACKUP_INTERNAL}")"
+  echo "Applying permissions to restore-root pod..."
   rancher kubectl wait $FLAGS deployment.apps/restore-root --for=condition=available --timeout=60s
   rancher kubectl exec deployment.apps/restore-root $FLAGS -- rm -rf "${FILES_MNT}"/*
   rancher kubectl exec deployment.apps/restore-root $FLAGS -- chmod 777 "${FILES_MNT}"
-  echo "Waiting 600s before executing restore and restore-root..."
+  echo "Executing restore and restore-root..."
   rancher kubectl wait $FLAGS deployment.apps/restore --for=condition=available --timeout=600s
   rancher kubectl exec deployment.apps/restore $FLAGS -- cp "${FILES_BACKUP_INTERNAL}" "${FILES_TEMP}"
   rancher kubectl exec deployment.apps/restore-root $FLAGS -- tar xzpf "${FILES_TEMP}" -C "${FILES_MNT}"
@@ -284,16 +285,22 @@ if [[ "$NEW" -eq 1 ]]; then
 fi  
   
 ## Create labkey pod
+echo "Creating labkey pod..."
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/labkey.yaml"
 
 ## Create load balancer
+echo "Creating load balancer..."
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/lb.yaml"
 
 ## Create backup pod
+echo "Creating backup pod..."
 rancher kubectl apply $FLAGS -f "${DEPLOY_TMP}/backup.yaml"
 
 # scale down the pods used for restoring
+echo "Scaling down restore pods..."
 rancher kubectl scale --replicas=0 deployment.apps/restore $FLAGS
 rancher kubectl scale --replicas=0 deployment.apps/restore-root $FLAGS
 
+echo "Cleaning up temporary files..."
 rm -rf "${DEPLOY_TMP}"
+echo "Deployment complete."
