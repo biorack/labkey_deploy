@@ -1,3 +1,6 @@
+.tls*
+.secrets
+lib
 labkey/*.jar
 mounts/files/*
 !mounts/files/.gitkeep
