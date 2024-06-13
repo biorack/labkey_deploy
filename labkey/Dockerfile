@@ -311,7 +311,7 @@ RUN micromamba create --yes --name python --file /tmp/python-lock.yaml && \
 ####### Carryover from previous LIMS deployment ###############
 ###############################################################
 
-USER labkey
+USER root
 
 # shell form e.g. executed w/ /bin/sh -c
 ENTRYPOINT ["/entrypoint.sh"]
