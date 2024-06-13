@@ -231,26 +231,26 @@ main() {
   #sed -i "s/@@jdbcUrl@@/jdbc:postgresql:\/\/${POSTGRES_HOST:-localhost}:${POSTGRES_PORT:-5432}\/${POSTGRES_DB:-${POSTGRES_USER}}${POSTGRES_PARAMETERS:-}/" config/application.properties
   #sed -i "s/@@jdbcUser@@/${POSTGRES_USER:-postgres}/" config/application.properties
   #sed -i "s/@@jdbcPassword@@/${POSTGRES_PASSWORD:-}/" config/application.properties
-  sed -i s/'@@POSTGRES_PASSWORD@@'/"${POSTGRES_PASSWORD}"/g config/application.properties
-  sed -i s/'@@MASTER_ENCRYPTION_KEY@@'/"${MASTER_ENCRYPTION_KEY}"/g config/application.properties
+  sed -i s/'@@POSTGRES_PASSWORD@@'/"${POSTGRES_PASSWORD}"/g ${LABKEY_HOME}/config/application.properties
+  sed -i s/'@@MASTER_ENCRYPTION_KEY@@'/"${MASTER_ENCRYPTION_KEY}"/g ${LABKEY_HOME}/config/application.properties
 
   # note: leave newlines out of CSP_REPORT/ENFORCE env vars
   #       ex: "default-src 'self' https: ; connect-src 'self' https: ; ...""
   if [ -n "$CSP_REPORT" ]; then
-    echo "csp.report=$CSP_REPORT\n" >> config/application.properties
+    echo "csp.report=$CSP_REPORT\n" >> ${LABKEY_HOME}/config/application.properties
   fi
   if [ -n "$CSP_ENFORCE" ]; then
-    echo "csp.enforce=$CSP_ENFORCE\n" >> config/application.properties
+    echo "csp.enforce=$CSP_ENFORCE\n" >> ${LABKEY_HOME}/config/application.properties
   fi
 
-  sed -i "s/postgres.host/${POSTGRES_HOST}/" config/application.properties
-  sed -i "s/postgres.port/${POSTGRES_PORT}/" config/application.properties
-  sed -i "s/postgres.user/${POSTGRES_USER}/" config/application.properties
-  sed -i "s/postgres.name/${POSTGRES_NAME}/" config/application.properties
+  sed -i "s/postgres.host/${POSTGRES_HOST}/" ${LABKEY_HOME}/config/application.properties
+  sed -i "s/postgres.port/${POSTGRES_PORT}/" ${LABKEY_HOME}/config/application.properties
+  sed -i "s/postgres.user/${POSTGRES_USER}/" ${LABKEY_HOME}/config/application.properties
+  sed -i "s/postgres.name/${POSTGRES_NAME}/" ${LABKEY_HOME}/config/application.properties
 
-  sed -i "s/smtp.host/${SMTP_HOST}/" config/application.properties
-  sed -i "s/smtp.user/${SMTP_USER}/" config/application.properties
-  sed -i "s/smtp.port/${SMTP_PORT}/" config/application.properties
+  sed -i "s/smtp.host/${SMTP_HOST}/" ${LABKEY_HOME}/config/application.properties
+  sed -i "s/smtp.user/${SMTP_USER}/" ${LABKEY_HOME}/config/application.properties
+  sed -i "s/smtp.port/${SMTP_PORT}/" ${LABKEY_HOME}/config/application.properties
   #sed -i "s/@@smtpPassword@@/${SMTP_PASSWORD}/" config/application.properties
   #sed -i "s/@@smtpAuth@@/${SMTP_AUTH}/" config/application.properties
   #sed -i "s/@@smtpFrom@@/${SMTP_FROM}/" config/application.properties
@@ -287,7 +287,7 @@ main() {
 
   ## Start X Virtual Frame Buffer for R
   >&2 echo "Starting xvfb..."
-  xvfb.sh start
+  ${LABKEY_HOME}/xvfb.sh start
   export DISPLAY=":2.0"
 
   # shellcheck disable=SC2086
