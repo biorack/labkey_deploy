@@ -27,7 +27,7 @@ ENV POSTGRES_USER="postgres" \
     LABKEY_DEFAULT_DOMAIN="localhost" \
     LABKEY_SYSTEM_SHORT_NAME="Sirius Cybernetics" \
     \
-    TOMCAT_BASE_DIR="/usr/local/tomcat/"
+    TOMCAT_BASE_DIR="/"
 
 ENV LABKEY_SYSTEM_EMAIL_ADDRESS="noreply@${LABKEY_DEFAULT_DOMAIN}"
 
@@ -130,7 +130,7 @@ COPY labkeyServer.jar .
 ENV PATH="${PATH}:${LABKEY_HOME}"
 
 # add xvfb script
-# COPY xvfb.sh .
+COPY xvfb.sh .
 
 # add spring properties
 COPY application.properties config/
@@ -194,45 +194,45 @@ RUN if [ -z "${DEBUG}" ]; then \
         find / -xdev -perm /6000 -type f -exec chmod a-s {} \; || true; \
     fi;
 
-# shell form e.g. executed w/ /bin/sh -c
-ENTRYPOINT ["/entrypoint.sh"]
-
 ###############################################################
 ####### Carryover from previous LIMS deployment ###############
 ###############################################################    
 
-# FROM mambaorg/micromamba:1.4.9 as micromamba
+FROM mambaorg/micromamba:1.4.9 as micromamba
 
-# # setup micromamba so we can use conda to create isolated R environments
-# ARG MAMBA_USER=labkey
-# ARG MAMBA_USER_ID=1000
-# ARG MAMBA_USER_GID=1000
-# ENV MAMBA_USER=$MAMBA_USER
-# ENV MAMBA_ROOT_PREFIX="/opt/conda"
-# ENV MAMBA_EXE="/bin/micromamba"
-# COPY --from=micromamba "$MAMBA_EXE" "$MAMBA_EXE"
-# COPY --from=micromamba /usr/local/bin/_activate_current_env.sh /usr/local/bin/_activate_current_env.sh
-# COPY --from=micromamba /usr/local/bin/_entrypoint.sh /usr/local/bin/_entrypoint.sh
-# RUN echo "source /usr/local/bin/_activate_current_env.sh" >> /etc/skel/.bashrc && \
-#     #groupadd -g "${MAMBA_USER_GID}" "${MAMBA_USER}" && \
-#     #useradd -u "${MAMBA_USER_ID}" -g "${MAMBA_USER_GID}" -ms /bin/bash "${MAMBA_USER}" && \
-#     echo "${MAMBA_USER}" > "/etc/arg_mamba_user" && \
-#     mkdir -p "$MAMBA_ROOT_PREFIX/conda-meta" && \
-#     chmod -R a+rwx "$MAMBA_ROOT_PREFIX" "/home" "/etc/arg_mamba_user" && \
-#     :
+# setup micromamba so we can use conda to create isolated R environments
+ARG MAMBA_USER=labkey
+ARG MAMBA_USER_ID=1000
+ARG MAMBA_USER_GID=1000
+ENV MAMBA_USER=$MAMBA_USER
+ENV MAMBA_ROOT_PREFIX="/opt/conda"
+ENV MAMBA_EXE="/bin/micromamba"
+COPY --from=micromamba "$MAMBA_EXE" "$MAMBA_EXE"
+COPY --from=micromamba /usr/local/bin/_activate_current_env.sh /usr/local/bin/_activate_current_env.sh
+COPY --from=micromamba /usr/local/bin/_entrypoint.sh /usr/local/bin/_entrypoint.sh
+RUN echo "source /usr/local/bin/_activate_current_env.sh" >> /etc/skel/.bashrc && \
+    #groupadd -g "${MAMBA_USER_GID}" "${MAMBA_USER}" && \
+    #useradd -u "${MAMBA_USER_ID}" -g "${MAMBA_USER_GID}" -ms /bin/bash "${MAMBA_USER}" && \
+    echo "${MAMBA_USER}" > "/etc/arg_mamba_user" && \
+    mkdir -p "$MAMBA_ROOT_PREFIX/conda-meta" && \
+    chmod -R a+rwx "$MAMBA_ROOT_PREFIX" "/home" "/etc/arg_mamba_user" && \
+    :
 
-# USER $MAMBA_USER
+#USER $MAMBA_USER
 
-# COPY --chown=$MAMBA_USER:$MAMBA_USER python-lock.yaml /tmp/python-lock.yaml
-# COPY --chown=$MAMBA_USER:$MAMBA_USER R_tidyverse-lock.yaml /tmp/R_tidyverse-lock.yaml
-# COPY --chown=$MAMBA_USER:$MAMBA_USER R_smkosina01-lock.yaml /tmp/R_smkosina01-lock.yaml
-# RUN micromamba create --yes --name python --file /tmp/python-lock.yaml && \
-#     micromamba create --yes --name R_tidyverse --file /tmp/R_tidyverse-lock.yaml && \
-#     micromamba create --yes --name R_smkosina01 --file /tmp/R_smkosina01-lock.yaml && \
-#     micromamba run --name R_smkosina01 \
-#         R --slave -e "install.packages('growthrates', repos='http://cran.us.r-project.org')" && \
-#     micromamba clean --all --yes
+COPY --chown=$MAMBA_USER:$MAMBA_USER python-lock.yaml /tmp/python-lock.yaml
+COPY --chown=$MAMBA_USER:$MAMBA_USER R_tidyverse-lock.yaml /tmp/R_tidyverse-lock.yaml
+COPY --chown=$MAMBA_USER:$MAMBA_USER R_smkosina01-lock.yaml /tmp/R_smkosina01-lock.yaml
+RUN micromamba create --yes --name python --file /tmp/python-lock.yaml && \
+    micromamba create --yes --name R_tidyverse --file /tmp/R_tidyverse-lock.yaml && \
+    micromamba create --yes --name R_smkosina01 --file /tmp/R_smkosina01-lock.yaml && \
+    micromamba run --name R_smkosina01 \
+        R --slave -e "install.packages('growthrates', repos='http://cran.us.r-project.org')" && \
+    micromamba clean --all --yes
 
 ###############################################################
 ####### Carryover from previous LIMS deployment ###############
 ###############################################################
+
+# shell form e.g. executed w/ /bin/sh -c
+ENTRYPOINT ["/entrypoint.sh"]
