@@ -15,7 +15,7 @@ LABKEY_CUSTOM_PROPERTIES_S3_URI="${LABKEY_CUSTOM_PROPERTIES_S3_URI:=none}"
 LABKEY_DEFAULT_PROPERTIES_S3_URI="${LABKEY_DEFAULT_PROPERTIES_S3_URI:=none}"
 
 # set below to 'labkeywebapp/WEB-INF/classes/log4j2.xml' to use embedded tomcat version from the built .jar
-LOG4J_CONFIG_FILE="${LOG4J_CONFIG_FILE:=labkeywebapp/WEB-INF/classes/log4j2.xml}"
+LOG4J_CONFIG_FILE="${LOG4J_CONFIG_FILE:=log4j2.xml}"
 
 # below assumes using local log4j2.xml file, as the embedded version is not available for edits until after server is running
 JSON_OUTPUT="${JSON_OUTPUT:-false}"
@@ -74,7 +74,7 @@ main() {
       LOG_LEVEL_API_MODULELOADER='TRACE' \
       LOG_LEVEL_API_SETTINGS='TRACE' \
       \
-      LOGGER_PATTERN='%-80.80logger{79}'
+      LOGGER_PATTERN='%-40.40logger{39}'
 
     env | sort
   fi
@@ -90,6 +90,7 @@ main() {
   #
   # relative paths below here are relative to LABKEY_HOME
   #
+  echo "Entering labkey home directory at $LABKEY_HOME..."
   cd "$LABKEY_HOME" || exit 1
 
   OLD_IFS="$IFS"
@@ -231,6 +232,7 @@ main() {
     echo "csp.enforce=$CSP_ENFORCE\n" >> config/application.properties
   fi
 
+  echo "Adding database and smtp settings to config/application.properties from environment variables..."
   sed -i "s/postgres.host/${POSTGRES_HOST}/" config/application.properties
   sed -i "s/postgres.port/${POSTGRES_PORT}/" config/application.properties
   sed -i "s/postgres.user/${POSTGRES_USER}/" config/application.properties
@@ -270,15 +272,17 @@ main() {
 
   fi
 
+  echo "Making heap dump directory..."
   HEAP_DUMP_PATH="$LABKEY_HOME/files/heap_dumps_$(date +%Y%m%d_%H%M%S)"
   mkdir -pv $HEAP_DUMP_PATH
 
   ## Start X Virtual Frame Buffer for R
-  # >&2 echo "Starting xvfb..."
-  # ${LABKEY_HOME}/xvfb.sh start
-  # export DISPLAY=":2.0"
+  echo "Starting xvfb..."
+  ${LABKEY_HOME}/xvfb.sh start
+  export DISPLAY=":2.0"
 
   # shellcheck disable=SC2086
+  echo "Executing Labkey Server..."
   exec java \
     \
     -Duser.timezone="${JAVA_TIMEZONE}" \
@@ -331,4 +335,5 @@ main() {
 
 }
 
+echo "Executing entrypoint main function..."
 main
