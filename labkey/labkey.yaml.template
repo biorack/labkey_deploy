@@ -39,8 +39,6 @@ spec:
     spec:
       containers:
       - env:
-        - name: CATALINA_OPTS
-          value: "-Xms16G -Xmx16G -XX:-HeapDumpOnOutOfMemoryError"
         - name: SMTP_HOST
           value: smtp.lbl.gov
         - name: MASTER_ENCRYPTION_KEY
@@ -68,10 +66,6 @@ spec:
           successThreshold: 1
           timeoutSeconds: 2
         name: labkey
-        ports:
-        - containerPort: 8080
-          name: webserver
-          protocol: TCP
         startupProbe:
           httpGet:
             path: /admin-healthCheck.api

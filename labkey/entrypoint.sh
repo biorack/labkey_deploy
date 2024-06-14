@@ -15,7 +15,7 @@ LABKEY_CUSTOM_PROPERTIES_S3_URI="${LABKEY_CUSTOM_PROPERTIES_S3_URI:=none}"
 LABKEY_DEFAULT_PROPERTIES_S3_URI="${LABKEY_DEFAULT_PROPERTIES_S3_URI:=none}"
 
 # set below to 'labkeywebapp/WEB-INF/classes/log4j2.xml' to use embedded tomcat version from the built .jar
-LOG4J_CONFIG_FILE="${LOG4J_CONFIG_FILE:=log4j2.xml}"
+LOG4J_CONFIG_FILE="${LOG4J_CONFIG_FILE:=labkeywebapp/WEB-INF/classes/log4j2.xml}"
 
 # below assumes using local log4j2.xml file, as the embedded version is not available for edits until after server is running
 JSON_OUTPUT="${JSON_OUTPUT:-false}"
