@@ -1,6 +1,3 @@
-# Example run command:
-# make LABKEY_BUILD_DATE=$(date "+%Y-%m-%d-%H-%M") all
-
 SHELL := /usr/bin/env bash
 PLATFORM := $(shell uname -o)
 
@@ -24,7 +21,7 @@ IDENT ?= labkey
 PULL_TAG ?= latest
 
 LABKEY_VERSION ?= 24.3.4-6
-LABKEY_BUILD_DATE ?= latest
+LABKEY_BUILD_DATE ?=
 LABKEY_DISTRIBUTION ?= community
 LABKEY_EK ?= 123abc456
 
@@ -73,6 +70,7 @@ build:
 		--rm \
 		--compress \
 		$(CACHE_FLAG) \
+		-t $(BUILD_REPO_NAME):latest \
 		-t $(BUILD_LOCAL_TAG) \
 		--build-arg 'FROM_TAG=$(FROM_TAG)' \
 		--build-arg 'DEBUG=$(DEBUG)' \
@@ -88,6 +86,7 @@ build:
 		--rm \
 		--compress \
 		$(CACHE_FLAG) \
+		-t $(BUILD_REPO_NAME):latest \
 		-t $(BUILD_LOCAL_TAG) \
 		--build-arg 'FROM_TAG=$(FROM_TAG)' \
 		--build-arg 'DEBUG=$(DEBUG)' \
