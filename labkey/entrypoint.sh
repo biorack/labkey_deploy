@@ -43,18 +43,6 @@ SMTP_USER=${SMTP_USER:-}
 LABKEY_SERVER_HOSTNAME=${LABKEY_SERVER_HOSTNAME:-labkey}
 LABKEY_HOME=${LABKEY_HOME:-/usr/local/labkey}
 
-if [ -z "$DATABASE_PASSWORD" ]
-then
-    echo "ERROR: DATABASE_PASSWORD environment variable does not exist. This is required to start LabKey Server"
-    exit 1
-fi
-
-if [ -z "$MASTER_ENCRYPTION_KEY" ]
-then
-    echo "ERROR: MASTER_ENCRYPTION_KEY environment variable does not exist. This is required to start LabKey Server"
-    exit 1
-fi
-
 ###############################################################
 #### Variables above defined by user ##########################
 ###############################################################
@@ -286,9 +274,9 @@ main() {
   mkdir -pv $HEAP_DUMP_PATH
 
   ## Start X Virtual Frame Buffer for R
-  >&2 echo "Starting xvfb..."
-  ${LABKEY_HOME}/xvfb.sh start
-  export DISPLAY=":2.0"
+  # >&2 echo "Starting xvfb..."
+  # ${LABKEY_HOME}/xvfb.sh start
+  # export DISPLAY=":2.0"
 
   # shellcheck disable=SC2086
   exec java \
