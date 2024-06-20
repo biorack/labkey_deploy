@@ -6,11 +6,6 @@ fi
 
 # set -eu
 
-keystore_pass="${TOMCAT_KEYSTORE_PASSWORD:-}"
-keystore_filename="${TOMCAT_KEYSTORE_FILENAME:-labkey.p12}"
-keystore_alias="${TOMCAT_KEYSTORE_ALIAS:-}"
-keystore_format="${TOMCAT_KEYSTORE_FORMAT:-}"
-
 LABKEY_CUSTOM_PROPERTIES_S3_URI="${LABKEY_CUSTOM_PROPERTIES_S3_URI:=none}"
 LABKEY_DEFAULT_PROPERTIES_S3_URI="${LABKEY_DEFAULT_PROPERTIES_S3_URI:=none}"
 
@@ -77,14 +72,6 @@ main() {
       LOGGER_PATTERN='%-40.40logger{39}'
 
     env | sort
-  fi
-
-  if [ -n "$keystore_format" ]; then
-    openssl_format_flag="$(
-      echo "$keystore_format" | tr '[:upper:]' '[:lower:]'
-    )"
-  else
-    openssl_format_flag='pkcs12'
   fi
 
   #
@@ -169,33 +156,10 @@ main() {
       && mv "${prop_file}.tmp" "$prop_file"
   done
 
-  if [ -z "$keystore_pass" ]; then
-    keystore_pass="$(random_string 64)"
-  fi
-
   # below only works if server.tomcat.accesslog settings in application.properties are set to go to file instead of stdout
   if [ -n "$TOMCAT_ENABLE_ACCESS_LOG" ]; then
     ln -sfv /proc/1/fd/1 /tmp/access.log
   fi
-
-  openssl req \
-    -x509 \
-    -newkey rsa:4096 \
-    -keyout 'privkey.pem' \
-    -out 'cert.pem' \
-    -days 365 \
-    -nodes \
-    -subj "/C=${CERT_C:?}/ST=${CERT_ST:?}/L=${CERT_L}/O=${CERT_O}/OU=${CERT_OU}/CN=${CERT_CN}" \
-      >/dev/null 2>&1
-
-  openssl "$openssl_format_flag" \
-      -export \
-      -out "$keystore_filename" \
-      -inkey 'privkey.pem' \
-      -in 'cert.pem' \
-      -name "$keystore_alias" \
-      -passout "pass:${keystore_pass}" \
-        >/dev/null 2>&1
 
   if [ -n "${DEBUG:-}" ]; then
     tail -n+1 \
@@ -206,14 +170,6 @@ main() {
     if command -v tree >/dev/null 2>&1; then
       tree .
     fi
-
-    sleep 1
-
-    openssl "$openssl_format_flag" \
-      -nokeys \
-      -info \
-      -in "$keystore_filename" \
-      -passin "pass:${keystore_pass}"
   fi
 
   echo "Adding secrets to config/application.properties from environment variables..."
@@ -326,10 +282,6 @@ main() {
     -jar labkeyServer.jar \
     \
     ${JAVA_POST_JAR_EXTRA} \
-    \
-    --server.ssl.key-store-password="$keystore_pass" \
-    --server.ssl.key-store="$TOMCAT_KEYSTORE_FILENAME" \
-    --server.ssl.key-alias="$keystore_alias" \
     \
     ;
 

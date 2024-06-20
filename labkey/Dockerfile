@@ -23,7 +23,7 @@ ARG LABKEY_EK
 # dependent ENVs declared separately
 ENV POSTGRES_USER="postgres" \
     \
-    LABKEY_PORT="8443" \
+    LABKEY_PORT="8080" \
     LABKEY_HOME="/usr/local/labkey" \
     LABKEY_DEFAULT_DOMAIN="labkey" \
     LABKEY_SYSTEM_SHORT_NAME="Sirius Cybernetics" \
