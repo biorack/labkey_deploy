@@ -313,11 +313,11 @@ main() {
     -Dlog4j.debug="$debug_string" \
     -Dlog4j.configurationFile="$LOG4J_CONFIG_FILE" \
     \
-    -Dorg.apache.catalina.startup.EXIT_ON_INIT_FAILURE=true \
+    -Dorg.apache.catalina.startup.EXIT_ON_INIT_FAILURE=false \
     \
     -DsynchronousStartup=false \
     -DterminateOnExistingConnections=false \
-    -DterminateOnStartupFailure=true \
+    -DterminateOnStartupFailure=false \
     \
     ${DD_JAVA_AGENT} \
     \

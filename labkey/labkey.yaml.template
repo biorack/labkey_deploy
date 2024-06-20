@@ -57,30 +57,11 @@ spec:
               optional: false
         image: {{LABKEY_IMAGE_TAG}}
         imagePullPolicy: Always
-        livenessProbe:
-          failureThreshold: 10
-          httpGet:
-            path: /admin-healthCheck.api
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 1
-          periodSeconds: 2
-          successThreshold: 1
-          timeoutSeconds: 2
         name: labkey
         ports:
         - containerPort: 8080
           name: webserver
           protocol: TCP
-        startupProbe:
-          httpGet:
-            path: /admin-healthCheck.api
-            port: 8080
-            scheme: HTTP
-          failureThreshold: 200
-          periodSeconds: 3
-          successThreshold: 1
-          timeoutSeconds: 2
         resources: {}
         securityContext:
           allowPrivilegeEscalation: false
