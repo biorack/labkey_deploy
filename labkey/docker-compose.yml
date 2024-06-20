@@ -13,7 +13,7 @@ services:
       - pg-community
       # - mailhog
     ports:
-      - ${HOST_PORT:-8080}:8080
+      - ${HOST_PORT:-8443}:8443
     volumes:
       - ./mounts/files:/labkey/files
       # - files:/labkey/files
@@ -125,7 +125,7 @@ services:
       - pg-allpg
       # - mailhog
     ports:
-      - ${HOST_PORT:-8080}:8080
+      - ${HOST_PORT:-8443}:8443
     volumes:
       - ./mounts/files:/labkey/files
       # - files:/labkey/files
@@ -235,7 +235,7 @@ services:
       - pg-enterprise
       # - mailhog
     ports:
-      - ${HOST_PORT:-8080}:8080
+      - ${HOST_PORT:-8443}:8443
     volumes:
       - ./mounts/files:/labkey/files
       # - files:/labkey/files
@@ -345,7 +345,7 @@ services:
       - pg-lims_starter
       # - mailhog
     ports:
-      - ${HOST_PORT:-8080}:8080
+      - ${HOST_PORT:-8443}:8443
     volumes:
       - ./mounts/files:/labkey/files
       # - files:/labkey/files
