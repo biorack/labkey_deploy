@@ -177,7 +177,7 @@ COPY log4j2.xml log4j2.xml
 RUN mkdir -p datadog \
     && wget -q -O datadog/dd-java-agent.jar https://dtdg.co/latest-java-tracer
 
-VOLUME "${LABKEY_FILES_ROOT}/files"
+VOLUME "${LABKEY_FILES_ROOT}/@files"
 VOLUME "${LABKEY_HOME}/externalModules"
 VOLUME "${LABKEY_HOME}/logs"
 

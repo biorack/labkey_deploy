@@ -14,10 +14,7 @@ FROM_TAG ?= 17-jre
 
 CACHE_FLAG ?= --no-cache
 
-TAG_LATEST ?=
-PUSH_LATEST ?=
 IDENT ?= labkey
-
 PULL_TAG ?= latest
 
 LABKEY_VERSION ?= 24.3.4-6
@@ -35,11 +32,6 @@ BUILD_REMOTE_REPO := $(BUILD_REPO_URI)/$(BUILD_REPO_NAME)
 
 BUILD_LOCAL_TAG ?= $(BUILD_REPO_NAME):$(BUILD_VERSION)_$(LABKEY_BUILD_DATE)
 BUILD_REMOTE_TAG ?= $(BUILD_REMOTE_REPO):$(BUILD_VERSION)_$(LABKEY_BUILD_DATE)
-
-# ifeq (1,$(DEBUG))
-#   BUILD_LOCAL_TAG := $(addsuffix -debug,$(BUILD_LOCAL_TAG))
-#   BUILD_REMOTE_TAG ?= $(addsuffix -debug,$(BUILD_REMOTE_TAG))
-# endif
 
 define tc
 $(shell printf "%steamcity[progressMessage '%s%n']" '##' '$1' ; )
@@ -102,19 +94,9 @@ tag:
 		$(BUILD_LOCAL_TAG) \
 		$(BUILD_REMOTE_TAG);
 
-	if [ -n "$(TAG_LATEST)" ]; then \
-		docker tag \
-			$(BUILD_REPO_NAME):latest \
-			$(BUILD_REMOTE_REPO):latest; \
-	fi
-
 push:
 	$(call tc,pushing $(BUILD_REMOTE_TAG) docker container)
 	docker push $(BUILD_REMOTE_TAG);
-
-	if [ -n "$(PUSH_LATEST)" ]; then \
-		docker push $(BUILD_REMOTE_REPO):latest; \
-	fi
 
 up:
 	$(call tc,bringing up compose)

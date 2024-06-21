@@ -229,7 +229,7 @@ main() {
   fi
 
   echo "Making heap dump directory..."
-  HEAP_DUMP_PATH="$LABKEY_HOME/files/heap_dumps_$(date +%Y%m%d_%H%M%S)"
+  HEAP_DUMP_PATH="$LABKEY_HOME/files/heap_dumps/heap_dumps_$(date +%Y%m%d_%H%M%S)"
   mkdir -pv $HEAP_DUMP_PATH
 
   ## Start X Virtual Frame Buffer for R
