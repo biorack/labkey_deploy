@@ -6,10 +6,8 @@ metadata:
     field.cattle.io/ingressState: >-
       {"bGIvbGltcy9sYi5saW1zLnByb2R1Y3Rpb24uc3ZjLnNwaW4ubmVyc2Mub3JnLy84MDgw":"deployment:lims-24:labkey","bGIvbGltcy9tZXRhdGxhcy5uZXJzYy5nb3YvLzgwODA=":"deployment:lims-24:labkey","bWV0YXRsYXMtc2hvcnQtY2VydA==":"lims-24:metatlas-short-cert"}
     field.cattle.io/publicEndpoints: >-
-      [{"addresses":["128.55.206.100"],"port":80,"protocol":"HTTP","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"lb.lims-24.development.svc.spin.nersc.org","allNodes":true},{"addresses":["128.55.206.100"],"port":443,"protocol":"HTTPS","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"metatlas-dev.nersc.gov","allNodes":true}]
-    kubectl.kubernetes.io/last-applied-configuration: >-
-      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"field.cattle.io/creatorId":"u-kjpiuiv26t","field.cattle.io/ingressState":"{\"bGIvbGltcy9sYi5saW1zLnByb2R1Y3Rpb24uc3ZjLnNwaW4ubmVyc2Mub3JnLy84MDgw\":\"deployment:lims-24:labkey\",\"bGIvbGltcy9tZXRhdGxhcy5uZXJzYy5nb3YvLzgwODA=\":\"deployment:lims-24:labkey\",\"bWV0YXRsYXMtc2hvcnQtY2VydA==\":\"lims-24:metatlas-short-cert\"}","field.cattle.io/publicEndpoints":"[{\"addresses\":[\"128.55.206.106\"],\"port\":80,\"protocol\":\"HTTP\",\"serviceName\":\"lims-24:labkey\",\"ingressName\":\"lims-24:lb\",\"hostname\":\"lb.lims-24.development.svc.spin.nersc.org\",\"allNodes\":true},{\"addresses\":[\"128.55.206.106\"],\"port\":443,\"protocol\":\"HTTPS\",\"serviceName\":\"lims-24:labkey\",\"ingressName\":\"lims-24:lb\",\"hostname\":\"metatlas-dev.nersc.gov\",\"allNodes\":true}]","nersc.gov/clustername":"development","nersc.gov/serveralias":"svc"},"creationTimestamp":null,"generation":1,"labels":{"cattle.io/creator":"norman"},"name":"lb","namespace":"lims-24","selfLink":"/apis/extensions/v1beta1/namespaces/lims-24/ingresses/lb"},"spec":{"rules":[{"host":"lb.lims-24.development.svc.spin.nersc.org","http":{"paths":[{"backend":{"service":{"name":"labkey","port":{"number":8080}}},"pathType":"ImplementationSpecific"}]}},{"host":"metatlas-dev.nersc.gov","http":{"paths":[{"backend":{"service":{"name":"labkey","port":{"number":8080}}},"pathType":"ImplementationSpecific"}]}}],"tls":[{"hosts":["metatlas-dev.nersc.gov"],"secretName":"metatlas-cert"}]},"status":{"loadBalancer":{}}}
-    nersc.gov/clustername: development
+      [{"addresses":["128.55.206.100"],"port":80,"protocol":"HTTP","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"{{LONG_FQDN}}","allNodes":true},{"addresses":["128.55.206.100"],"port":443,"protocol":"HTTPS","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"{{SHORT_FQDN}}","allNodes":true}]
+    nersc.gov/clustername: {{CLUSTER}}
     nersc.gov/collab_uids: '97932'
     nersc.gov/gid: '104741'
     nersc.gov/gids: 124,57338,57339,57340,60734,72473,5242,96414,97932,104741
@@ -79,7 +77,7 @@ metadata:
   uid: b6f4eaf3-07cc-4fb1-9bb8-671dbd628c60
 spec:
   rules:
-    - host: lb.lims-24.development.svc.spin.nersc.org
+    - host: {{LONG_FQDN}}
       http:
         paths:
           - backend:
@@ -88,7 +86,7 @@ spec:
                 port:
                   number: 8080
             pathType: ImplementationSpecific
-    - host: metatlas-dev.nersc.gov
+    - host: {{SHORT_FQDN}}
       http:
         paths:
           - backend:
@@ -99,12 +97,7 @@ spec:
             pathType: ImplementationSpecific
   tls:
     - hosts:
-        - metatlas-dev.nersc.gov
+        - {{SHORT_FQDN}}
       secretName: metatlas-cert
 status:
-  loadBalancer:
-    ingress:
-      - ip: 128.55.206.100
-      - ip: 128.55.206.101
-      - ip: 128.55.206.102
-      - ip: 128.55.206.99
+  loadBalancer: {}
