@@ -12,8 +12,6 @@ NEW_DOWNLOAD ?= 0
 
 FROM_TAG ?= 17-jre
 
-CACHE_FLAG ?= --no-cache
-
 IDENT ?= labkey
 PULL_TAG ?= latest
 
@@ -61,7 +59,6 @@ build:
 		--load \
 		--rm \
 		--compress \
-		$(CACHE_FLAG) \
 		-t $(BUILD_LOCAL_TAG) \
 		--build-arg 'FROM_TAG=$(FROM_TAG)' \
 		--build-arg 'DEBUG=$(DEBUG)' \
@@ -76,7 +73,6 @@ build:
 		--load \
 		--rm \
 		--compress \
-		$(CACHE_FLAG) \
 		-t $(BUILD_LOCAL_TAG) \
 		--build-arg 'FROM_TAG=$(FROM_TAG)' \
 		--build-arg 'DEBUG=$(DEBUG)' \
