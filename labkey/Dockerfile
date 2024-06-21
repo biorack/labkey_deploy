@@ -5,7 +5,7 @@ ARG FROM_TAG=17-jre
 # uncomment for alpine-based eclipse-temurin jre
 # ARG FROM_TAG=17-jre-alpine
 
-FROM mambaorg/micromamba:1.4.9 as micromamba
+FROM mambaorg/micromamba:1.5.8 as micromamba
 FROM ${FROM_REPO_IMAGE}:${FROM_TAG} as base
 
 LABEL maintainer="LabKey Systems Engineering <ops@labkey.com>"
@@ -194,7 +194,8 @@ USER $MAMBA_USER
 COPY --chown=$MAMBA_USER:$MAMBA_USER python-lock.yaml /tmp/python-lock.yaml
 COPY --chown=$MAMBA_USER:$MAMBA_USER R_tidyverse-lock.yaml /tmp/R_tidyverse-lock.yaml
 COPY --chown=$MAMBA_USER:$MAMBA_USER R_smkosina01-lock.yaml /tmp/R_smkosina01-lock.yaml
-RUN micromamba create --yes --name python --file /tmp/python-lock.yaml && \
+RUN micromamba clean --locks && \
+    micromamba create --yes --name python --file /tmp/python-lock.yaml && \
     micromamba create --yes --name R_tidyverse --file /tmp/R_tidyverse-lock.yaml && \
     micromamba create --yes --name R_smkosina01 --file /tmp/R_smkosina01-lock.yaml && \
     micromamba run --name R_smkosina01 \

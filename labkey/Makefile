@@ -62,7 +62,6 @@ build:
 		--rm \
 		--compress \
 		$(CACHE_FLAG) \
-		-t $(BUILD_REPO_NAME):latest \
 		-t $(BUILD_LOCAL_TAG) \
 		--build-arg 'FROM_TAG=$(FROM_TAG)' \
 		--build-arg 'DEBUG=$(DEBUG)' \
@@ -78,7 +77,6 @@ build:
 		--rm \
 		--compress \
 		$(CACHE_FLAG) \
-		-t $(BUILD_REPO_NAME):latest \
 		-t $(BUILD_LOCAL_TAG) \
 		--build-arg 'FROM_TAG=$(FROM_TAG)' \
 		--build-arg 'DEBUG=$(DEBUG)' \
