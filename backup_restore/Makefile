@@ -7,8 +7,6 @@ else
 _G :=
 endif
 
-CACHE_FLAG ?= --no-cache
-
 IDENT ?= labkey
 PULL_TAG ?= latest
 
@@ -50,7 +48,6 @@ build:
 		--load \
 		--rm \
 		--compress \
-		$(CACHE_FLAG) \
 		-t $(BUILD_LOCAL_TAG) \
 		--build-arg 'LABKEY_DISTRIBUTION=$(BUILD_DISTRIBUTION)' \
 		.
@@ -61,7 +58,6 @@ build:
 		--load \
 		--rm \
 		--compress \
-		$(CACHE_FLAG) \
 		-t $(BUILD_LOCAL_TAG) \
 		--build-arg 'LABKEY_DISTRIBUTION=$(BUILD_DISTRIBUTION)' \
 		.
