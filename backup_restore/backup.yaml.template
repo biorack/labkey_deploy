@@ -49,7 +49,7 @@ spec:
                     - ALL
                 privileged: false
                 allowPrivilegeEscalation: false
-                runAsUser: 104741
+                runAsUser: 97932
           imagePullSecrets:
             - name: registry-nersc
           initContainers:

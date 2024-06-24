@@ -8,7 +8,7 @@ metadata:
     field.cattle.io/publicEndpoints: >-
       [{"addresses":["128.55.206.100"],"port":80,"protocol":"HTTP","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"{{LONG_FQDN}}","allNodes":true},{"addresses":["128.55.206.100"],"port":443,"protocol":"HTTPS","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"{{SHORT_FQDN}}","allNodes":true}]
     nersc.gov/clustername: {{CLUSTER}}
-    nersc.gov/collab_uids: '97932'
+    nersc.gov/collab_uids: '104741,97932'
     nersc.gov/gid: '104741'
     nersc.gov/gids: 124,57338,57339,57340,60734,72473,5242,96414,97932,104741
     nersc.gov/roles: user
