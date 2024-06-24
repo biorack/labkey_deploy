@@ -1,103 +1,41 @@
-apiVersion: networking.k8s.io/v1
+﻿apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
     field.cattle.io/creatorId: u-kjpiuiv26t
-    field.cattle.io/ingressState: >-
-      {"bGIvbGltcy9sYi5saW1zLnByb2R1Y3Rpb24uc3ZjLnNwaW4ubmVyc2Mub3JnLy84MDgw":"deployment:lims-24:labkey","bGIvbGltcy9tZXRhdGxhcy5uZXJzYy5nb3YvLzgwODA=":"deployment:lims-24:labkey","bWV0YXRsYXMtc2hvcnQtY2VydA==":"lims-24:metatlas-short-cert"}
-    field.cattle.io/publicEndpoints: >-
-      [{"addresses":["128.55.206.100"],"port":80,"protocol":"HTTP","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"{{LONG_FQDN}}","allNodes":true},{"addresses":["128.55.206.100"],"port":443,"protocol":"HTTPS","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"{{SHORT_FQDN}}","allNodes":true}]
+    field.cattle.io/ingressState: '{"bGIvbGltcy9sYi5saW1zLnByb2R1Y3Rpb24uc3ZjLnNwaW4ubmVyc2Mub3JnLy84MDgw":"deployment:lims-24:labkey","bGIvbGltcy9tZXRhdGxhcy5uZXJzYy5nb3YvLzgwODA=":"deployment:lims-24:labkey","bWV0YXRsYXMtc2hvcnQtY2VydA==":"lims-24:metatlas-short-cert"}'
+    field.cattle.io/publicEndpoints: '[{"addresses":["128.55.206.100"],"port":80,"protocol":"HTTP","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"{{LONG_FQDN}}","allNodes":true},{"addresses":["128.55.206.100"],"port":443,"protocol":"HTTPS","serviceName":"lims-24:labkey","ingressName":"lims-24:lb","hostname":"{{SHORT_FQDN}}","allNodes":true}]'
     nersc.gov/clustername: {{CLUSTER}}
-    nersc.gov/collab_uids: '104741,97932'
-    nersc.gov/gid: '104741'
-    nersc.gov/gids: 124,57338,57339,57340,60734,72473,5242,96414,97932,104741
-    nersc.gov/roles: user
     nersc.gov/serveralias: svc
-    nersc.gov/uid: '104741'
-    nersc.gov/username: bkieft
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: '360000'
-    nginx.ingress.kubernetes.io/proxy-read-timeout: '360000'
-    nginx.ingress.kubernetes.io/proxy-send-timeout: '360000'
-    nginx.ingress.kubernetes.io/server-snippet: >-
-      keepalive_timeout 360000s;client_body_timeout
-      360000s;client_header_timeout 360000s;
-  creationTimestamp: '2024-06-04T17:11:57Z'
-  generation: 2
+  creationTimestamp: null
+  generation: 1
   labels:
     cattle.io/creator: norman
-  managedFields:
-    - apiVersion: networking.k8s.io/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:status:
-          f:loadBalancer:
-            f:ingress: {}
-      manager: nginx-ingress-controller
-      operation: Update
-      subresource: status
-      time: '2024-06-04T17:12:27Z'
-    - apiVersion: networking.k8s.io/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:annotations:
-            .: {}
-            f:field.cattle.io/creatorId: {}
-            f:field.cattle.io/ingressState: {}
-            f:nersc.gov/clustername: {}
-            f:nersc.gov/serveralias: {}
-          f:labels:
-            .: {}
-            f:cattle.io/creator: {}
-        f:spec:
-          f:rules: {}
-          f:tls: {}
-      manager: kubectl-client-side-apply
-      operation: Update
-      time: '2024-06-21T20:32:38Z'
-    - apiVersion: networking.k8s.io/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:annotations:
-            f:field.cattle.io/publicEndpoints: {}
-            f:kubectl.kubernetes.io/last-applied-configuration: {}
-            f:nersc.gov/collab_uids: {}
-            f:nersc.gov/gids: {}
-            f:nginx.ingress.kubernetes.io/proxy-connect-timeout: {}
-            f:nginx.ingress.kubernetes.io/proxy-read-timeout: {}
-            f:nginx.ingress.kubernetes.io/proxy-send-timeout: {}
-            f:nginx.ingress.kubernetes.io/server-snippet: {}
-      manager: agent
-      operation: Update
-      time: '2024-06-21T21:18:34Z'
   name: lb
-  namespace: lims-24
-  resourceVersion: '775026013'
-  uid: b6f4eaf3-07cc-4fb1-9bb8-671dbd628c60
+  selfLink: /apis/extensions/v1beta1/namespaces/lims-24/ingresses/lb
 spec:
   rules:
-    - host: {{LONG_FQDN}}
-      http:
-        paths:
-          - backend:
-              service:
-                name: labkey
-                port:
-                  number: 8080
-            pathType: ImplementationSpecific
-    - host: {{SHORT_FQDN}}
-      http:
-        paths:
-          - backend:
-              service:
-                name: labkey
-                port:
-                  number: 8080
-            pathType: ImplementationSpecific
+  - host: {{LONG_FQDN}}
+    http:
+      paths:
+      - backend:
+          service:
+            name: labkey
+            port:
+              number: 8080
+        pathType: ImplementationSpecific
+  - host: {{SHORT_FQDN}}
+    http:
+      paths:
+      - backend:
+          service:
+            name: labkey
+            port:
+              number: 8080
+        pathType: ImplementationSpecific
   tls:
-    - hosts:
-        - {{SHORT_FQDN}}
-      secretName: metatlas-cert
+  - hosts:
+    - {{SHORT_FQDN}}
+    secretName: metatlas-cert
 status:
   loadBalancer: {}
