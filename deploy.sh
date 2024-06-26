@@ -123,11 +123,11 @@ fi
 if [[ $DEV -eq 1 ]]; then
   PROJECT="c-fwj56:p-lswtz" # development:m2650
   export CLUSTER="development"
-  export SHORT_FQDN="metatlas-dev.nersc.gov"
+  export SHORT_FQDN="metatlas-dev.lbl.gov"
 else
   PROJECT="c-tmq7p:p-gqfz8" # production cluster for m2650. Run 'rancher context switch' to get other values.
   export CLUSTER="production"
-  export SHORT_FQDN="metatlas.nersc.gov"
+  export SHORT_FQDN="metatlas.lbl.gov"
 fi
 export LONG_FQDN="lb.lims-24.${CLUSTER}.svc.spin.nersc.org"
 CERT_FILE="${SCRIPT_DIR}/.tls.${SHORT_FQDN}.pem"
