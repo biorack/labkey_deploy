@@ -1,5 +1,5 @@
 # metatlas LIMS
-Configuration for deploying and running [metatlas.lbl.gov](https://metatlas.nersc.gov/), the LIMS for
+Configuration for deploying and running [metatlas.lbl.gov](https://metatlas.lbl.gov/), the LIMS for
 the [metabolomics team](https://jgi.doe.gov/our-science/science-programs/metabolomics-technology/)
 at [Joint Genome Institute](https://www.jgi.doe.gov/). This LIMS is based on the community
 edition of [LabKey](https://www.labkey.org/). The metatlas LIMS is deployed on
@@ -92,9 +92,9 @@ If you add or update an environment yaml file, you must run `update_lock.sh exam
 to generate an updated lock file before deploying the LIMS. To do this:
 
 1. Install the the conda-lock package with `pip install conda-lock`
-2. If running on a Mac with Apple's M1/M2 architecture, edit the `update_lock.sh` script to 
+1. If running on a Mac with Apple's M1/M2 architecture, edit the `update_lock.sh` script to 
 include “-p linux-aarch64” flag in the `conda-lock` command if not already there.
-3. Run the update lock script on all yaml files that have been added or edited
+1. Run the update lock script on all yaml files that have been added or edited
 ```
 ./update_lock.sh R_smkosina01.yaml
 ./update_lock.sh R_tidyverse.yaml
@@ -107,32 +107,33 @@ include “-p linux-aarch64” flag in the `conda-lock` command if not already t
 The following instructions can be used to do a new deployment of metatlas LIMS, including a restore of old data from backups, or to update an existing deployment to match the settings in this repo.
 
 1. Install [docker](https://docs.docker.com/get-docker/) or [podman](https://podman.io/getting-started/installation) on your local machine.
-2. Git clone this repo to your local machine:
+1. Git clone this repo to your local machine:
   - `git clone https://github.com/biorack/labkey_deploy_embedded`
-3. If building the docker images from a Macbook with Apple's M1/M2 architecture, first install the
+1. If building the docker images from a Macbook with Apple's M1/M2 architecture, first install the
 [buildx kit](https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/) and have it running in your local docker instance. This will allow you to build an image that can be run
 on perlmutter AMD architecture.
-3. Build and push images to [registry.spin.nersc.gov](https://registry.spin.nersc.gov):
+1. Build and push images to [registry.spin.nersc.gov](https://registry.spin.nersc.gov):
   - `docker login registry.spin.nersc.gov`
   - `cd <this_repo>/labkey/; ./make_command.sh`
-4. Git clone this repo to a perlmutter login node:
+1. Git clone this repo to a perlmutter login node:
   - `git clone https://github.com/biorack/labkey_deploy_embedded`
-5. In the root directory of the repo, create a .secrets file:
-  - ```cd <repo_dir>
+1. In the root directory of the repo, create a .secrets file:
+  ```cd <repo_dir>
        touch .secrets
        chmod 600 .secrets
        echo "POSTGRES_PASSWORD=MyPostgresPassWord" > .secrets
-       echo "MASTER_ENCRYPTION_KEY=MyLabkeyEncryptionKey" >> .secrets```
-  - Secrets can be identified within the existing SPIN app by starting a terminal and echoing the
+       echo "MASTER_ENCRYPTION_KEY=MyLabkeyEncryptionKey" >> .secrets
+  ```
+  - Secrets can be identified within the existing SPIN app by starting a Rancher terminal and echoing the
   environmental variables above.
-6. In the root directory of the repo, create the following files containing your TLS private key and certificate:
-  - .tls.metatlas.nersc.gov.key  (if working with the dev instance, use .tls.metatlas-dev.nersc.gov.key)
-  - .tls.metatlas.nersc.gov.pem  (if working with the dev instance, use .tls.metatlas-dev.nersc.gov.pem)
+1. In the root directory of the repo, create the following files containing your TLS private key and certificate:
+  - .tls.metatlas.lbl.gov.key  (if working with the dev instance, use .tls.metatlas-dev.lbl.gov.key)
+  - .tls.metatlas.lbl.gov.pem  (if working with the dev instance, use .tls.metatlas-dev.lbl.gov.pem)
     - The certificate should be PEM encoded, contain the full chain, and be in reverse order (your cert at top to root cert at bottom).
     - To obtain a certificate for metatlas.lbl.gov, follow [these instructions](https://code.jgi.doe.gov/-/snippets/27).
-7. Ensure the .tls.key file is only readable by you:
-  - `chmod 600 .tls.metatlas.nersc.gov.keys`
-8. Run the deployment script from the perlmutter login node: `<repo_dir>/deploy.sh --new --labkey registry.nersc.gov/m2650/lims/labkey/community:labkeyVERSION_YYYY-MM-DD-HH-SS --backup registry.nersc.gov/m2650/lims/labkey/community:backup_restore_YYYY-MM-DD-HH`
+1. Ensure the .tls.key file is only readable by you:
+  - `chmod 600 .tls.metatlas.lbl.gov.keys`
+1. Run the deployment script from the perlmutter login node: `<repo_dir>/deploy.sh --new --labkey registry.nersc.gov/m2650/lims/labkey/community:labkeyVERSION_YYYY-MM-DD-HH-SS --backup registry.nersc.gov/m2650/lims/labkey/community:backup_restore_YYYY-MM-DD-HH`
   - You'll need to pass flags for the correct tags of the labkey and backup_restore docker images. Set the timestamps to match the tags on registry.spin.nersc.gov under the [metabolomics project directory](https://registry.nersc.gov/harbor/projects/69/repositories/lims%2Flabkey%2Fcommunity)
   - If doing a new installation, where the persistant volumes do not already contain a populated database and filesystem, then pass the `--new` flag. The `--new` flag will restore backups of both the database and the filesystem where labkey stores files. By default, `--new` uses the most recent backups, but you can use `--timestamp` to select a specific backup. 
 
