@@ -1,0 +1,27 @@
+name: R_smkosina01 
+channels:
+  - conda-forge
+dependencies:
+  - r-base=4.3.1
+  - r-gplots
+  - r-plyr
+  - r-zoo
+  - r-multcomp
+  - r-reshape2
+  - r-ggplot2
+  - r-agricolae
+  - r-multcomp
+  - r-multcompView
+  - r-lsmeans
+  - r-stringr
+  - r-pheatmap
+  - r-ggplot2
+  - r-agricolae
+  - r-multcompView
+  - r-lsmeans
+  - r-forcats
+  - r-Cairo
+  - r-igraph
+  - r-graphlayouts
+  - r-ggraph
+  - r-threejs

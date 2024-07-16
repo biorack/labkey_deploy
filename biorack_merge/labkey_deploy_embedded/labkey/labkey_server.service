@@ -1,0 +1,41 @@
+# Systemd unit file for labkey_server.
+# This default will require customization. Confirm or edit the LABKEY_HOME path.
+# You must always edit the ExecStart line to start with the full path to java.
+# <JAVA_HOME> is shown for clarity, but will not be substituted.
+# Learn more here: https://www.labkey.org/Documentation/wiki-page.view?name=serviceFile
+
+[Unit]
+Description=LabKey Server Application
+After=syslog.target network.target
+
+[Service]
+Type=simple
+Environment="JAVA_HOME=/opt/java/openjdk"
+Environment="LABKEY_HOME=/usr/local/labkey"
+Environment="JAVA_FLAGS_JAR_OPS=-Dorg.apache.catalina.startup.EXIT_ON_INIT_FAILURE=false -DterminateOnStartupFailure=false"
+Environment="JAVA_REFLECTION_JAR_OPS=--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED"
+WorkingDirectory=$LABKEY_HOME
+OOMScoreAdjust=-500
+
+ExecStart=/opt/java/openjdk/bin/java \
+    -Xms2G \
+    -Xmx2G \
+    -XX:+HeapDumpOnOutOfMemoryError \
+    -XX:ErrorFile=/usr/local/labkey/logs/error_%p.log \
+    -Djava.io.tmpdir=/usr/local/labkey/labkey-tmp \
+    -Djava.protocol.handler.pkgs=org.apache.catalina.webresources \
+    -Djdk.tls.ephemeralDHKeySize=2048 \
+    -Dorg.apache.catalina.security.SecurityListener.UMASK=`umask` \
+    $JAVA_FLAGS_JAR_OPS \
+    $JAVA_REFLECTION_JAR_OPS \
+    -jar labkeyServer.jar
+
+SuccessExitStatus=0 143
+Restart=on-failure
+RestartSec=15
+
+User=labkey
+Group=labkey
+
+[Install]
+WantedBy=multi-user.target
