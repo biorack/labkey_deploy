@@ -11,7 +11,8 @@ platform for running containered services using [Kubernetes](https://kubernetes.
 A [previous configuration](https://github.com/biorack/labkey_deploy) of the metatlas LIMS was set up
 with LabKey's non-embedded web server versions (up to major version 23), whereas this configuration
 deploys the embedded web server version (major version 24+). Use these instructions for updating,
-deploying, and debugging the LIMS SPIN app as of July, 2024.
+deploying, and debugging the LIMS SPIN app as of July, 2024. Please see previous commit history of this
+repository for deploying the old LabKey LIMS v23.
 
 ## LabKey Version Documentation
 
