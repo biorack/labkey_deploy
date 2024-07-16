@@ -39,7 +39,7 @@ ifeq (1,$(NEW_DOWNLOAD))
 $(shell ./scripts/download_lims_distribution.sh $(LABKEY_VERSION) .)
 endif
 
-.PHONY: all build tag login push up up-build down clean
+.PHONY: all build tag login push
 
 .EXPORT_ALL_VARIABLES:
 
@@ -91,46 +91,3 @@ tag:
 push:
 	$(call tc,pushing $(BUILD_REMOTE_TAG) docker container)
 	docker push $(BUILD_REMOTE_TAG);
-
-up:
-	$(call tc,bringing up compose)
-	docker-compose up --abort-on-container-exit ${BUILD_DISTRIBUTION} \
-			|| docker-compose stop ${BUILD_DISTRIBUTION} pg-${BUILD_DISTRIBUTION}
-
-up-allpg:
-	$(call tc,bringing up compose)
-	docker-compose up --abort-on-container-exit allpg \
-			|| docker-compose stop allpg pg-allpg
-
-up-enterprise:
-	$(call tc,bringing up compose)
-	docker-compose up --abort-on-container-exit enterprise \
-			|| docker-compose stop enterprise pg-enterprise
-
-up-lims_starter:
-	$(call tc,bringing up compose)
-	docker-compose up --abort-on-container-exit lims_starter \
-			|| docker-compose stop lims_starter pg-lims_starter
-
-down:
-	$(call tc,tearing down compose)
-	docker-compose down -v --remove-orphans
-
-clean:
-	docker images | grep -E '$(BUILD_REPO_NAME)|<none>' \
-		| awk '{print $$3}' | sort -u | $(_G)xargs -r docker image rm -f \
-			&& $(_G)find mounts/logs/ -name '*.log' -type f -print0 \
-				| $(_G)xargs -r -0 -t truncate -s0;
-
-test: down
-	$(call tc,running smoke tests)
-	IDENT=${BUILD_DISTRIBUTION} docker-compose up --detach ${BUILD_DISTRIBUTION};
-	@./smoke.bash \
-		&& printf "##teamcity[progressMessage '%s']\n" 'smoke test succeeded' \
-		|| printf "##teamcity[buildProblem description='%s' identity='%s']\n" \
-			'smoke test failed' \
-			'failure'
-	IDENT=${BUILD_DISTRIBUTION} docker-compose down -v
-
-pull: login
-	docker pull $(BUILD_REMOTE_REPO):$(PULL_TAG)
