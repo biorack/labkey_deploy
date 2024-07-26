@@ -171,6 +171,8 @@ running from a machine with Apple arch and use the `buildx kit` accordingly.
   - If `NEW_DOWNLOAD` is set to 1, you should see the LabKey software curl download.
   - Then you should see the docker image get built, tagged, and pushed. Navigate to the NERSC registry's
   [metabolomics project directory](https://registry.nersc.gov/harbor/projects/69/repositories/lims%2Flabkey%2Fcommunity) and ensure your tagged image is present.
+  - Note on July 26, 2024: An error occured during the docker build phase that was solved by changing the GID and UID for
+  mamba from 1000 to 999. If this occurs in the future, you made need to change to another value.
 
 ### Backup/Restore Image
 
