@@ -152,7 +152,7 @@ specific instructions for `labkey` and `backup_restore`.
 
 1. Install [docker](https://docs.docker.com/get-docker/) or [podman](https://podman.io/getting-started/installation) on your local machine.
 2. Git clone (or pull) this repo to your local machine:
-  - `git clone https://github.com/biorack/labkey_deploy_embedded`
+  - `git clone https://github.com/biorack/labkey_deploy`
 3. Enter the repo directory and ensure it matches the structure shown in the `tree -L 2` command above.
 4. If building the docker images from a Macbook with Apple's M1/M2 architecture, first install the
 [buildx kit](https://www.docker.com/blog/how-to-rapidly-build-multi-architecture-images-with-buildx/) and have it running in your local docker desktop. This will allow you to build an image that can be run
@@ -161,7 +161,7 @@ running from a machine with Apple arch and use the `buildx kit` accordingly.
 
 ### Labkey Image
 
-1. Enter the labkey subdirectory (`cd labkey_deploy_embedded/labkey/`)
+1. Enter the labkey subdirectory (`cd labkey_deploy/labkey/`)
 2. Edit the `make_command.sh` so that:
   - The `LABKEY_VERSION` flag matches the new version for which you're trying to create an image (e.g., `LABKEY_VERSION=24.3.4-6`).
   - The `NEW_DOWNLOAD` variable is 1 if you're downloading the LabKey software from online for the update.
@@ -180,7 +180,7 @@ running from a machine with Apple arch and use the `buildx kit` accordingly.
 
 ### Backup/Restore Image
 
-1. Enter the labkey subdirectory (`cd labkey_deploy_embedded/backup_restore/`)
+1. Enter the labkey subdirectory (`cd labkey_deploy/backup_restore/`)
 2. Optionally, edit the `Dockerfile` and update the base image in `FROM postgres:15-alpine`. If you do
 update this base image, you should edit the repo's `db/db.yaml` file `image:` line to match.
 3. Run `./make_command.sh`
@@ -192,7 +192,7 @@ update this base image, you should edit the repo's `db/db.yaml` file `image:` li
 ### Update repository
 
 Once the software update(s), local image building, and push to the NERSC registry is completed, push your
-local repo changes to `labkey_deploy_embedded` main (or your branch, then merge with main).
+local repo changes to `labkey_deploy` main (or your branch, then merge with main).
 
 ## Deployment Instructions
 
@@ -203,10 +203,10 @@ deploy script `deploy.sh` in the main repo directory. The deployment must happen
 (e.g., a perlmutter login node).
 
 1. Git clone (or pull) this repo on perlmutter:
-  - `git clone https://github.com/biorack/labkey_deploy_embedded`
+  - `git clone https://github.com/biorack/labkey_deploy`
 2. In the root directory of the repo, create a .secrets file:
   ```
-  cd labkey_deploy_embedded
+  cd labkey_deploy
        touch .secrets
        chmod 600 .secrets
        echo "POSTGRES_PASSWORD=MyPostgresPassWord" > .secrets
