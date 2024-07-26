@@ -25,6 +25,7 @@ The layout of the github repository for controlling the LIMS is:
 ```
 $ tree -L 2
 .
+├── LICENSE
 ├── README.md
 ├── backup_restore
 │   ├── Dockerfile
@@ -43,30 +44,23 @@ $ tree -L 2
     ├── Dockerfile
     ├── LICENSE
     ├── Makefile
-    ├── README.md
     ├── R_smkosina01-lock.yaml
     ├── R_smkosina01.yaml
     ├── R_tidyverse-lock.yaml
     ├── R_tidyverse.yaml
     ├── VERSION
     ├── application.properties
-    ├── config
     ├── docker-compose.yml
     ├── entrypoint.sh
     ├── labkey-files.yaml
     ├── labkey.yaml.template
-    ├── labkeyServer.jar
     ├── labkey_server.service
     ├── lb.yaml.template
     ├── log4j2.xml
     ├── make_command.sh
-    ├── mounts
     ├── python-lock.yaml
     ├── python.yaml
-    ├── quickstart_envs.sh
     ├── scripts
-    ├── smoke.bash
-    ├── src
     ├── startup
     ├── update_lock.sh
     └── xvfb.sh
