@@ -126,8 +126,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
 ###############################################################
 # setup micromamba so we can use conda to create isolated R environments
 ARG MAMBA_USER=labkey
-ARG MAMBA_USER_ID=1000
-ARG MAMBA_USER_GID=1000
+ARG MAMBA_USER_ID=999
+ARG MAMBA_USER_GID=999
 ENV MAMBA_USER=$MAMBA_USER
 ENV MAMBA_ROOT_PREFIX="/opt/conda"
 ENV MAMBA_EXE="/bin/micromamba"
