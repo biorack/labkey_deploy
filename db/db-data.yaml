@@ -11,7 +11,7 @@ metadata:
   labels:
     cattle.io/creator: norman
   name: db-data
-  selfLink: /api/v1/namespaces/lims/persistentvolumeclaims/db-data
+  selfLink: /api/v1/namespaces/lims-24/persistentvolumeclaims/db-data
 spec:
   accessModes:
   - ReadWriteOnce

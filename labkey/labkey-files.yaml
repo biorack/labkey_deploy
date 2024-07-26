@@ -11,7 +11,7 @@ metadata:
   labels:
     cattle.io/creator: norman
   name: labkey-files
-  selfLink: /api/v1/namespaces/lims/persistentvolumeclaims/labkey-files
+  selfLink: /api/v1/namespaces/lims-24/persistentvolumeclaims/labkey-files
 spec:
   accessModes:
   - ReadWriteOnce

@@ -11,9 +11,9 @@ metadata:
   generation: 1
   labels:
     cattle.io/creator: norman
-    workload.user.cattle.io/workloadselector: deployment-lims-restore-root
+    workload.user.cattle.io/workloadselector: deployment-lims-24-restore-root
   name: restore-root
-  selfLink: /apis/apps/v1/namespaces/lims/deployments/restore-root
+  selfLink: /apis/apps/v1/namespaces/lims-24/deployments/restore-root
 spec:
   paused: false
   progressDeadlineSeconds: 600
@@ -21,7 +21,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      workload.user.cattle.io/workloadselector: deployment-lims-restore-root
+      workload.user.cattle.io/workloadselector: deployment-lims-24-restore-root
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -33,7 +33,7 @@ spec:
         cattle.io/timestamp: "2021-01-11T18:22:26Z"
       creationTimestamp: null
       labels:
-        workload.user.cattle.io/workloadselector: deployment-lims-restore-root
+        workload.user.cattle.io/workloadselector: deployment-lims-24-restore-root
     spec:
       containers:
       - args:

@@ -11,9 +11,9 @@ metadata:
   generation: 1
   labels:
     cattle.io/creator: norman
-    workload.user.cattle.io/workloadselector: deployment-lims-restore
+    workload.user.cattle.io/workloadselector: deployment-lims-24-restore
   name: restore
-  selfLink: /apis/apps/v1/namespaces/lims/deployments/restore
+  selfLink: /apis/apps/v1/namespaces/lims-24/deployments/restore
 spec:
   paused: false
   progressDeadlineSeconds: 600
@@ -21,7 +21,7 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      workload.user.cattle.io/workloadselector: deployment-lims-restore
+      workload.user.cattle.io/workloadselector: deployment-lims-24-restore
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -33,7 +33,7 @@ spec:
         cattle.io/timestamp: "2021-01-11T18:22:26Z"
       creationTimestamp: null
       labels:
-        workload.user.cattle.io/workloadselector: deployment-lims-restore
+        workload.user.cattle.io/workloadselector: deployment-lims-24-restore
     spec:
       containers:
       - args: ["-c", "tail -f /dev/null"]
@@ -67,7 +67,7 @@ spec:
           privileged: false
           readOnlyRootFilesystem: false
           runAsNonRoot: true
-          runAsUser: 55710
+          runAsUser: 104741
         stdin: true
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
@@ -89,7 +89,7 @@ spec:
       terminationGracePeriodSeconds: 30
       volumes:
       - hostPath:
-          path: /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump
+          path: /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump/lims-24
           type: Directory
         name: vol1
       - name: vol2

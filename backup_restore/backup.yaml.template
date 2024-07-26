@@ -6,7 +6,7 @@ metadata:
     field.cattle.io/description: Backup database and data files
   labels:
     {}
-  namespace: lims
+  namespace: lims-24
 spec:
   jobTemplate:
     metadata:
@@ -59,7 +59,7 @@ spec:
           volumes:
             - hostPath:
                 type: Directory
-                path: /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump
+                path: /global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump/lims-24
               name: vol1
             - persistentVolumeClaim:
                 claimName: labkey-files
