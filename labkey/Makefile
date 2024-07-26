@@ -15,7 +15,7 @@ FROM_TAG ?= 17-jre
 IDENT ?= labkey
 PULL_TAG ?= latest
 
-LABKEY_VERSION ?= 24.3.4-6
+LABKEY_VERSION ?= 
 LABKEY_BUILD_DATE ?= 
 LABKEY_DISTRIBUTION ?= community
 LABKEY_EK ?= 123abc456
@@ -36,6 +36,7 @@ $(shell printf "%steamcity[progressMessage '%s%n']" '##' '$1' ; )
 endef
 
 ifeq (1,$(NEW_DOWNLOAD))
+$(info \\nDownloading LabKey distribution tar.gz file...\\n)
 $(shell ./scripts/download_lims_distribution.sh $(LABKEY_VERSION) .)
 endif
 
