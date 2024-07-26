@@ -20,6 +20,11 @@ LABKEY_BUILD_DATE ?=
 LABKEY_DISTRIBUTION ?= community
 LABKEY_EK ?= 123abc456
 
+# Exit if LABKEY_VERSION is empty
+ifeq ($(strip $(LABKEY_VERSION)),)
+$(error LABKEY_VERSION is not set. Exiting.)
+endif
+
 # repo/image:tags must be lowercase
 BUILD_VERSION ?= $(shell echo '$(LABKEY_VERSION)' | tr A-Z a-z)
 BUILD_DISTRIBUTION := $(shell echo '$(LABKEY_DISTRIBUTION)' | tr A-Z a-z)
