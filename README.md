@@ -236,3 +236,17 @@ certificate:
   three-dot button to the right of a workload and executing a shell or looking at logs.
 8. It is also a good idea to manually run the backup cronjob from Rancher and check that it is working
   properly by looking at the backup location (currently `/global/cfs/cdirs/metatlas/projects/lims_backups/pg_dump/lims-24`).
+
+### Deploying in the SPIN "Development" Environment
+
+SPIN has a development cluster in addition to the production cluster that a typical LIMS deployment occurs is.
+Sometimes it is useful to test a new LabKey version in the development cluster before moving to the production
+cluster if there has been a major version change or you're skipping versions during an update. To deploy in the
+development environment, use the following steps:
+
+1. Follow steps 1-4 in the deploy instructions above.
+2. Run the deployment script from the root directory of the repo on the perlmutter login node: 
+  - `deploy.sh --dev --new --labkey registry.nersc.gov/m2650/lims/labkey/community:labkeyVERSION_YYYY-MM-DD-HH-SS --backup registry.nersc.gov/m2650/lims/labkey/community:backup_restore_YYYY-MM-DD-HH`
+  - Note that you'll need to use the `--dev` flag, which spins up workloads in the SPIN development cluster
+3. This LIMS deployment is reachable at [metatlas-dev.lbl.gov](metatlas-dev.lbl.gov) and will not interfere with
+  the current production LIMS. This is the advantage of the dev cluster.
