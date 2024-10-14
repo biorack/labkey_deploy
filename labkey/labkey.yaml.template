@@ -6,8 +6,8 @@ metadata:
     field.cattle.io/creatorId: u-m44hajazl7
     field.cattle.io/publicEndpoints: '[{"addresses":["128.55.206.100"],"port":80,"protocol":"HTTP","serviceName":"lims-24:ingress-d797f3ea45e40671a8f16d32e4ff20f2","ingressName":"lims-24:lb","hostname":"{{LONG_FQDN}}","allNodes":true}]'
     nersc.gov/gid: "60734"
-    nersc.gov/gids: 55710,97932,60734,72473,104741
-    nersc.gov/uid: "104741"
+    nersc.gov/gids: 97932,60734,72473
+    nersc.gov/uid: "97932"
     nersc.gov/username: msdata
   creationTimestamp: null
   generation: 1
