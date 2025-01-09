@@ -41,7 +41,7 @@ $(shell printf "%steamcity[progressMessage '%s%n']" '##' '$1' ; )
 endef
 
 ifeq (1,$(NEW_DOWNLOAD))
-$(info \\nDownloading LabKey distribution tar.gz file...\\n)
+$(info Downloading LabKey distribution tar.gz file...)
 $(shell ./scripts/download_lims_distribution.sh $(LABKEY_VERSION) .)
 endif
 

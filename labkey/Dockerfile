@@ -116,7 +116,7 @@ ENV CERT_C="US" \
     LOG_LEVEL_API_SETTINGS= \
     LOG_LEVEL_API_PIPELINE=
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt clean && apt-get update && apt-get install -y \
     graphviz \
     xvfb \
     tree \

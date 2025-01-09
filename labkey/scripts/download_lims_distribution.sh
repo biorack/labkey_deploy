@@ -7,7 +7,7 @@ if [ $# -ne 2 ]; then
 fi
 
 # Construct the URL and define the location to save the file
-url="https://lk-binaries.s3-us-west-2.amazonaws.com/downloads/release/community/${1%%-*}/LabKey$1-community-embedded.tar.gz"
+url="https://lk-binaries.s3-us-west-2.amazonaws.com/downloads/release/community/${1%%-*}/LabKey$1-community.tar.gz"
 location=$2/src/latest.tar.gz
 
 # Download the file
