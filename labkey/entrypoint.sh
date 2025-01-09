@@ -189,14 +189,14 @@ main() {
   fi
 
   echo "Adding database and smtp settings to config/application.properties from environment variables..."
-  sed -i "s/postgres.host/${POSTGRES_HOST}/" config/application.properties
-  sed -i "s/postgres.port/${POSTGRES_PORT}/" config/application.properties
-  sed -i "s/postgres.user/${POSTGRES_USER}/" config/application.properties
-  sed -i "s/postgres.name/${POSTGRES_NAME}/" config/application.properties
+  #sed -i "s/postgres.host/${POSTGRES_HOST}/" config/application.properties
+  #sed -i "s/postgres.port/${POSTGRES_PORT}/" config/application.properties
+  #sed -i "s/postgres.user/${POSTGRES_USER}/" config/application.properties
+  #sed -i "s/postgres.name/${POSTGRES_NAME}/" config/application.properties
 
-  sed -i "s/smtp.host/${SMTP_HOST}/" config/application.properties
-  sed -i "s/smtp.user/${SMTP_USER}/" config/application.properties
-  sed -i "s/smtp.port/${SMTP_PORT}/" config/application.properties
+  sed -i "s/smtpHost/${SMTP_HOST}/" config/application.properties
+  sed -i "s/smtpUser/${SMTP_USER}/" config/application.properties
+  sed -i "s/smtpPort/${SMTP_PORT}/" config/application.properties
   #sed -i "s/@@smtpPassword@@/${SMTP_PASSWORD}/" config/application.properties
   #sed -i "s/@@smtpAuth@@/${SMTP_AUTH}/" config/application.properties
   #sed -i "s/@@smtpFrom@@/${SMTP_FROM}/" config/application.properties

@@ -42,7 +42,7 @@ spec:
         - name: CATALINA_OPTS
           value: "-Xms16G -Xmx16G -XX:-HeapDumpOnOutOfMemoryError"
         - name: SMTP_HOST
-          value: smtp.lbl.gov
+          value: smtp-relay.gmail.com
         - name: MASTER_ENCRYPTION_KEY
           valueFrom:
             secretKeyRef:
