@@ -53,7 +53,7 @@ spec:
               name: db
               optional: false
         image: postgres:15-alpine
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         name: db
         resources: {}
         securityContext:
