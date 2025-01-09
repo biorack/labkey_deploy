@@ -194,9 +194,9 @@ main() {
   #sed -i "s/postgres.user/${POSTGRES_USER}/" config/application.properties
   #sed -i "s/postgres.name/${POSTGRES_NAME}/" config/application.properties
 
-  sed -i "s/smtpHost/${SMTP_HOST}/" config/application.properties
-  sed -i "s/smtpUser/${SMTP_USER}/" config/application.properties
-  sed -i "s/smtpPort/${SMTP_PORT}/" config/application.properties
+  #sed -i "s/smtpHost/${SMTP_HOST}/" config/application.properties
+  #sed -i "s/smtpUser/${SMTP_USER}/" config/application.properties
+  #sed -i "s/smtpPort/${SMTP_PORT}/" config/application.properties
   #sed -i "s/@@smtpPassword@@/${SMTP_PASSWORD}/" config/application.properties
   #sed -i "s/@@smtpAuth@@/${SMTP_AUTH}/" config/application.properties
   #sed -i "s/@@smtpFrom@@/${SMTP_FROM}/" config/application.properties
