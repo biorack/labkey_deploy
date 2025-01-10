@@ -16,3 +16,4 @@ startup/samplemanagement-with-startup.properties
 mounts/
 .DS_Store
 ./*/.DS_Store
+labkey/VERSION
