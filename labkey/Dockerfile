@@ -93,7 +93,7 @@ ENV CERT_C="US" \
     CSP_REPORT= \
     CSP_ENFORCE= \
     \
-    SMTP_HOST="smtp" \
+    SMTP_HOST="smtp-relay.gmail.com" \
     SMTP_USER="root" \
     SMTP_PORT="25" \
     SMTP_PASSWORD= \
