@@ -16,4 +16,4 @@ curl -o $location --create-dirs $url
 # Move to the labkey repo directory and extract jar
 tar xzvf $2/src/latest.tar.gz -C $2/src/
 cp ./src/*$2*/labkeyServer.jar ./
-cp ./src/*$2*/VERSION ./
+#cp ./src/*$2*/VERSION ./
